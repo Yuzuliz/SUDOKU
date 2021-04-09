@@ -1,5 +1,26 @@
 #include "SUDOKU.h"
 
+void reverse(int* arr, int begin, int end)
+{
+	for (; begin < end; begin++, end--)
+	{
+		int temp = arr[begin];
+		arr[begin] = arr[end];
+		arr[end] = temp;
+	}
+
+}
+
+//×óÒÆkÎ»
+void move_left(int* arr, int k, int arr_num)
+{
+	k = k % arr_num;
+
+	reverse(arr, 0, arr_num - k - 1);
+	reverse(arr, arr_num - k, arr_num - 1);
+	reverse(arr, 0, arr_num - 1);
+}
+
 bool SUDOKU::CorrectPlace(int x, int y)
 {
 	int up = x / 3 * 3;
@@ -60,6 +81,17 @@ void SUDOKU::Initial(string input,string output)
 	}
 }
 
+void SUDOKU::Shift() {
+	move_left(board[1], 3, DIM);
+	move_left(board[2], 6, DIM);
+	move_left(board[3], 1, DIM);
+	move_left(board[4], 4, DIM);
+	move_left(board[5], 7, DIM);
+	move_left(board[6], 2, DIM);
+	move_left(board[7], 5, DIM);
+	move_left(board[8], 8, DIM);
+}
+
 void SUDOKU::Display(string ps)
 {
 	ofstream out(outputPath, ios::out|ios::app);
@@ -69,6 +101,8 @@ void SUDOKU::Display(string ps)
 		return;
 	}
 	out << ps << endl;
+	string result = "",temp;
+	bool is_result = true;
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -79,15 +113,36 @@ void SUDOKU::Display(string ps)
 			}
 			else
 			{
+				is_result = false;
 				out << "$ ";
 			}
 
 		}
 		out << endl;
 	}
-	out << "---------------------------" << endl;
+	out << "-------------------------\n";
+	if (is_result)
+	{
+		for (int i = 0; i < 19; i++)
+		{
+			Shift();
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
+				{
+					out << board[i][j] << ' ';
+				}
+				out << endl;
+			}
+			out << "-------------------------\n";
+		}
+	}
+	//out << result << endl;
+
 	out.close();
 }
+
+
 
 bool SUDOKU::Backtrack(int t)
 {
