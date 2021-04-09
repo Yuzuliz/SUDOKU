@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SUDOKU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SUDOKU.h" />
