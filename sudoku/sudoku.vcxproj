@@ -142,11 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="File_Operation.cpp" />
     <ClCompile Include="getopt.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SUDOKU.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
+    <ClInclude Include="File_Operation.h" />
     <ClInclude Include="getopt.h" />
     <ClInclude Include="SUDOKU.h" />
   </ItemGroup>

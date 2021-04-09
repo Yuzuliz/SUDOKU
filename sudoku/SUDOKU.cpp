@@ -1,3 +1,4 @@
+#pragma once
 #include "SUDOKU.h"
 
 void reverse(int* arr, int begin, int end)
@@ -20,6 +21,34 @@ void move_left(int* arr, int k, int arr_num)
 	/*reverse(arr, 0, arr_num - k - 1);
 	reverse(arr, arr_num - k, arr_num - 1);*/
 	reverse(arr, 0, arr_num - 1);
+}
+
+string align(int a[],int N)
+{
+	int k = 1;
+	short int shift[8] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+	stringstream sstream;
+	do {
+		for (int i = 0; i < DIM; i++)
+			sstream << a[i] << ' ';
+		sstream << "\n";
+
+		for (int line = 1; line < DIM; line++)
+		{
+			for (int cur_pos = shift[line-1], j = 0; j < DIM; j++, cur_pos++)
+			{
+				if (cur_pos >= DIM)
+				{
+					cur_pos %= DIM;
+				}
+				sstream << a[cur_pos] << ' ';
+			}
+			sstream << "\n";
+		}
+		k++;
+		sstream << "---->>><<<----\n";
+	} while (next_permutation(a, a + DIM) && k < N);
+	return sstream.str();
 }
 
 bool SUDOKU::CorrectPlace(int x, int y)
@@ -66,6 +95,11 @@ bool SUDOKU::CorrectPlace(int x, int y)
 	return true;
 }
 
+SUDOKU::SUDOKU(string output)
+{
+	this->outputPath = output;
+}
+
 void SUDOKU::Initial(string input,string output)
 {
 	outputPath = output;
@@ -82,6 +116,7 @@ void SUDOKU::Initial(string input,string output)
 	}
 }
 
+/*
 void SUDOKU::Shift() {
 	move_left(board[1], 3, DIM);
 	move_left(board[2], 6, DIM);
@@ -91,56 +126,51 @@ void SUDOKU::Shift() {
 	move_left(board[6], 2, DIM);
 	move_left(board[7], 5, DIM);
 	move_left(board[8], 8, DIM);
-}
+}*/
 
 void SUDOKU::Display(string ps)
 {
-	ofstream out(outputPath, ios::out|ios::app);
-	if (!out.is_open())
-	{
-		cout << "无法写出结果，请稍后再试！" << endl;
-		return;
-	}
-	out << ps << endl;
-	string result = "",temp;
+	
+	//out << ps << endl;
+	string result;
+	stringstream sstream;
 	bool is_result = true;
+	sstream << ps << '\n';
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
 		{
 			if (board[i][j])
 			{
-				out << board[i][j] << ' ';
+				sstream << board[i][j] << ' ';
 			}
 			else
 			{
 				is_result = false;
-				out << "$ ";
+				sstream << "$ ";
 			}
 
 		}
-		out << endl;
+		sstream << endl;
 	}
-	out << "-------------------------\n";
+	sstream << "-------------------------\n";
+	
+	//out << result << endl;
+	result = sstream.str();
 	if (is_result)
 	{
-		for (int i = 0; i < 19; i++)
-		{
-			Shift();
-			for (int i = 0; i < 9; i++)
-			{
-				for (int j = 0; j < 9; j++)
-				{
-					out << board[i][j] << ' ';
-				}
-				out << endl;
-			}
-			out << "-------------------------\n";
-		}
+		result += align(board[0]);
 	}
-	//out << result << endl;
-
-	out.close();
+	Write_File write_obj(outputPath);
+	// ofstream out(outputPath, ios::out|ios::app);
+	//if (!out.is_open())
+	//{
+	//	cout << "无法写出结果，请稍后重试！" << endl;
+	//	return;
+	//}
+	//out << result;
+	//out.close();
+	write_obj.write_data(result);
 }
 
 
