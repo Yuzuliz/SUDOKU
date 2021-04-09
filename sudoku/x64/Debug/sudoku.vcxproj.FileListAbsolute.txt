@@ -1,0 +1,2 @@
+C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug\sudoku.exe
+C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug\sudoku.pdb

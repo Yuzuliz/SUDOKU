@@ -1,8 +1,5 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#define DIM 9
-using namespace std;
+#include "common.h"
 
 
 class SUDOKU

@@ -1,8 +1,4 @@
-#include "getopt.h"                // 包含头文件
-#pragma comment(lib, "getopt.lib")   // 加载静态库文件（Windows）
-
-#include <stdlib.h>
-#include <stdio.h>
+#include "common.h"
 
 #include "SUDOKU.h"
 
