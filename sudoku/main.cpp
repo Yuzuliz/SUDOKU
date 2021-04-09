@@ -1,5 +1,9 @@
-#include <io.h>
-#include <process.h>
+#include "getopt.h"                // 包含头文件
+#pragma comment(lib, "getopt.lib")   // 加载静态库文件（Windows）
+
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "SUDOKU.h"
 
 /*
@@ -31,7 +35,8 @@ int parseOptions(int argc, char** argv, int& imgWid, int& imgHei, int& imgCnt)
 
 	return 0;
 }*/
-/*
+
+// 短参数测试案例
 void testGetOpt(int argc, char* argv[]) {
 	int opt;  // getopt() 的返回值
 	const char* optstring = "a:b:c:d"; // 设置短参数类型及是否需要参数
@@ -42,18 +47,12 @@ void testGetOpt(int argc, char* argv[]) {
 		printf("optind = %d\n", optind); // 下一个被处理的下标值
 		printf("argv[optind - 1] = %s\n\n", argv[optind - 1]); // 参数内容
 	}
-}*/
+}
 
 int main(int argc,char* argv[])
 {
-	/*
-	int imgWid, imgHei, imgCnt;
-
-	if (-1 == parseOptions(argc, argv, imgWid, imgHei, imgCnt))
-	{
-		printf("Get parameter failed!\n");
-		exit(-1);
-	}*/
+	testGetOpt(argc, argv);
+	cout << "参数解析结束" << endl;
 
 	//输入错误字符检查，少输、多输检查，行列块重复检查
 	SUDOKU sudoku;

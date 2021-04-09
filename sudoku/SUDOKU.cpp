@@ -15,9 +15,10 @@ void reverse(int* arr, int begin, int end)
 void move_left(int* arr, int k, int arr_num)
 {
 	k = k % arr_num;
-
-	reverse(arr, 0, arr_num - k - 1);
-	reverse(arr, arr_num - k, arr_num - 1);
+	reverse(arr, 0, k - 1);
+	reverse(arr, k, arr_num - 1);
+	/*reverse(arr, 0, arr_num - k - 1);
+	reverse(arr, arr_num - k, arr_num - 1);*/
 	reverse(arr, 0, arr_num - 1);
 }
 
