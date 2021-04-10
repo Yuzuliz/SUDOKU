@@ -26,6 +26,7 @@ extern const string dir;
 extern const string Output_Path;
 extern const string gen_path_end;
 extern const string gen_path_start;
+extern const string distinct_result;
 extern const char* optstring;
 
 #endif // !_COMMON_H

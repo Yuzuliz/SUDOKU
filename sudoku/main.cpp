@@ -8,6 +8,7 @@ const string dir = "txtFiles";
 const string Output_Path = dir + "/sudoku.txt";
 const string gen_path_end = dir + "/end.txt";
 const string gen_path_start = dir + "/start.txt";
+const string distinct_result = dir + "/distinct.txt";
 const char* optstring = "c:s:n:m:r:u"; // 设置短参数类型及是否需要参数
 
 

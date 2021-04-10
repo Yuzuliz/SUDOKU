@@ -25,25 +25,23 @@ string align_string(string a)
 	short int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
 	short int index[DIM] = { 0,1,2,3,4,5,6,7,8 };
 	string result = "";
-	do {
-		for (int i = 0; i < DIM; i++)
+	for (int i = 0; i < DIM; i++)
+	{
+		result = result + a[index[i]] + ' ';
+	}
+	result += "\n";
+	int cur_pos;
+	for (int line = 1; line < DIM; line++)
+	{
+		cur_pos = shift[line - 1];
+		for (int j = 0; j < DIM; j++, cur_pos++)
 		{
-			result = result + a[index[i]] + ' ';
+			cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
+			result = result + a[index[cur_pos]] + ' ';
 		}
 		result += "\n";
-		int cur_pos;
-		for (int line = 1; line < DIM; line++)
-		{
-			cur_pos = shift[line - 1];
-			for (int j = 0; j < DIM; j++, cur_pos++)
-			{
-				cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
-				result = result + a[index[cur_pos]] + ' ';
-			}
-			result += "\n";
-		}
-		result += "\n";
-	} while (next_permutation(index, index + DIM));
+	}
+	result += "\n";
 	return result;
 }
 
@@ -125,6 +123,44 @@ void SUDOKU::Display(Write_File *write_obj, string ps)
 	write_obj->write_data(result);
 }
 
+int SUDOKU::Backtrack(Write_File* write_obj, int t)
+{
+	if (t < 0 || t > DIM * DIM)
+	{
+		cout << "回溯出现问题" << endl;
+		return 0;
+	}
+	// 已经访问了棋盘上的所有位置
+	if (t == DIM * DIM)
+	{
+		Display(write_obj, "终局状态：");
+		return 1;
+	}
+	int x = t / DIM, y = t % DIM;
+	// 如果这个位置上本来就有值，那就访问下一个位置
+	if (board[x][y])
+	{
+		return Backtrack(write_obj, t + 1);
+	}
+	// 该位置为空，则尝试所有的数
+	else
+	{
+		int result_num = 0;
+		// 尝试所有的数
+		for (int i = 1; i < DIM + 1; i++)
+		{
+			board[x][y] = i;
+			// 是否有重复
+			if (CorrectPlace(x, y))
+			{
+				result_num += Backtrack(write_obj, t + 1);
+			}
+		}
+		board[x][y] = 0;
+		return result_num;
+	}
+}
+
 bool SUDOKU::EndGen(int end_boards, Write_File* write_out)
 {
 	string result = "";
@@ -162,9 +198,9 @@ bool SUDOKU::EndGen(int end_boards, Write_File* write_out)
 	return true;
 }
 
-bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
+bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks, bool distinct)
 {
-	if (blanks < 20 || blanks > 55)
+	if (blanks < 1 || blanks > 64)
 	{
 		return false;
 	}
@@ -174,13 +210,15 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 	char temp_board[DIM][DIM], c;
 	int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
 	int index[DIM] = { 0,1,2,3,4,5,6,7,8 };
+	Write_File* write_distinct = new Write_File(distinct_result);
 	srand((unsigned)time(NULL));
-	for (; boards_number < start_boards; boards_number++)
+	while(boards_number < start_boards)
 	{
 		//生成终局
-		for (int j = 0; j < DIM; j++)
+		//随机生成第一行
+		for (i = 0; i < DIM; i++)
 		{
-			diff[j] = 0;
+			diff[i] = 0;
 		}
 		j = 0;
 		k = 0;
@@ -192,15 +230,17 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 				continue;
 			}
 			c = i + 1 + '0';
-			temp_board[0][k++] = c;
+			temp_board[0][k] = c;
+			board[0][k] = i + 1;
+			k++;
 			diff[i] = 1;
 			j++;
 		}
 
-		for (int i = 0; i < DIM; i++)
-			cout << temp_board[0][i] << " ";
-		cout << endl << endl;
-
+		//for (int i = 0; i < DIM; i++)
+		//	cout << temp_board[0][i] << " ";
+		//cout << endl << endl;
+		//平移得到后八行
 		for (int line = 1; line < DIM; line++)
 		{
 			cur_pos = shift[line - 1];
@@ -208,6 +248,7 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 			{
 				cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
 				temp_board[line][j] = temp_board[0][index[cur_pos]];
+				board[line][j] = board[0][index[cur_pos]];
 			}
 		}
 
@@ -221,6 +262,7 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 				if (temp_board[i][ran_j] == '$')
 					continue;
 				temp_board[i][ran_j] = '$';
+				board[i][ran_j] = 0;
 				j++;
 			}
 		}
@@ -232,8 +274,18 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 			if (temp_board[ran_i][ran_j] == '$')
 				continue;
 			temp_board[ran_i][ran_j] = '$';
+			board[ran_i][ran_j] = 0;
 			k++;
 		}
+
+		if (distinct)
+		{
+			int result_num = Backtrack(write_distinct);
+			if (result_num > 1)
+				continue;
+		}
+
+		//保存该初局
 		for (int i = 0; i < DIM; i++)
 		{
 			for (int j = 0; j < DIM; j++)
@@ -243,46 +295,50 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 			result = result + '\n';
 		}
 		result = result + '\n';
+		boards_number++;
 	}
 	write_out->write_data(result);
+	delete write_distinct;
 	return true;
 }
 
-bool SUDOKU::Backtrack(Write_File*write_obj, int t)
-{
-	if (t < 0 || t > DIM * DIM)
-	{
-		cout << "回溯出现问题" << endl;
-		return false;
-	}
-	// 已经访问了棋盘上的所有位置
-	if (t == DIM*DIM)
-	{
-		Display(write_obj, "终局状态：");
-		return true;
-	}
-	int x = t / DIM, y = t % DIM;
-	// 如果这个位置上本来就有值，那就访问下一个位置
-	if (board[x][y])
-	{
-		return Backtrack(write_obj, t + 1);
-	}
-	// 该位置为空，则尝试所有的数
-	else
-	{
-		bool resultFlag = true;
-		// 尝试所有的数
-		for (int i = 1; i < DIM + 1; i++)
-		{
-			board[x][y] = i;
-			// 是否有重复
-			if (CorrectPlace(x, y))
-			{
-				resultFlag = resultFlag && Backtrack(write_obj, t + 1);
-			}
-		}
-		board[x][y] = 0;
-		return resultFlag;
-	}
-	return false;
-}
+
+
+//bool SUDOKU::Backtrack(Write_File*write_obj, int t)
+//{
+//	if (t < 0 || t > DIM * DIM)
+//	{
+//		cout << "回溯出现问题" << endl;
+//		return false;
+//	}
+//	// 已经访问了棋盘上的所有位置
+//	if (t == DIM*DIM)
+//	{
+//		Display(write_obj, "终局状态：");
+//		return true;
+//	}
+//	int x = t / DIM, y = t % DIM;
+//	// 如果这个位置上本来就有值，那就访问下一个位置
+//	if (board[x][y])
+//	{
+//		return Backtrack(write_obj, t + 1);
+//	}
+//	// 该位置为空，则尝试所有的数
+//	else
+//	{
+//		bool resultFlag = true;
+//		// 尝试所有的数
+//		for (int i = 1; i < DIM + 1; i++)
+//		{
+//			board[x][y] = i;
+//			// 是否有重复
+//			if (CorrectPlace(x, y))
+//			{
+//				resultFlag = resultFlag && Backtrack(write_obj, t + 1);
+//			}
+//		}
+//		board[x][y] = 0;
+//		return resultFlag;
+//	}
+//	return false;
+//}

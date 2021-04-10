@@ -19,11 +19,11 @@ public:
 
 	void Display(Write_File *write_obj, string ps = "");
 
-	bool Backtrack(Write_File *write_obj, int t = 0);
+	int Backtrack(Write_File *write_obj, int t = 0);
 
 	bool EndGen(int end_boards, Write_File *write_out);
 
-	bool StartGen(int start_boards, Write_File* write_out, int blanks = 25);
+	bool StartGen(int start_boards, Write_File* write_out, int blanks = 25, bool distinct=0);
 };
 
 ////·´×ª

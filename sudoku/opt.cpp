@@ -66,7 +66,6 @@ bool opt::get_opt(int argc, char* argv[]) {
 		case 'u':
 			if (this->opt_append != 0) return 0;
 			this->opt_append = OnlySolution;
-			this->opt_append_arg = optarg;
 			break;
 		}
 	}
@@ -81,14 +80,16 @@ bool opt::do_solve_board()
 	{
 		Read_File read_obj(this->opt_type_arg);
 		Write_File *write_obj = new Write_File(Output_Path);
+		int result_num;
 		while (!read_obj.read_eof())
 		{
 			if (!read_obj.read_data()) break;
-			read_obj.show_board();
+			//read_obj.show_board();
 			cout << endl;
 			change_char_2_int(read_obj.board, board);
 			this->sudoku->Display(write_obj, "当前状态: ");
-			if (!sudoku->Backtrack(write_obj))
+			result_num = sudoku->Backtrack(write_obj);
+			if (!result_num)
 			{
 				cout << "运算失败，请检查输入是否合法！" << endl;
 				delete write_obj;
@@ -96,7 +97,7 @@ bool opt::do_solve_board()
 			}
 			else
 			{
-				cout << "运算成功，请查看" << Output_Path << endl;
+				printf("运算成功，共有%d个结果，请查看%s\n",result_num,Output_Path.c_str());
 			}
 		}
 		delete write_obj;
@@ -137,19 +138,51 @@ bool opt::do_end_board()
 bool opt::do_gen_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
-	int hole_numbers_min, hole_numbers_max, hole_numbers;
-	if (!get_range(this->opt_append_arg, &hole_numbers_min, &hole_numbers_max))
+	int hole_numbers = 25;
+	bool distinct = 0;
+	switch (this->opt_append)
 	{
-		cout << "挖空范围输入有误，请查看操作是否正确" << endl;
+	case 0:
+		break;
+	case Difficulty:
+		switch (atoi(this->opt_append_arg.c_str()))
+		{
+		case 1:
+			hole_numbers = 10;
+			break;
+		case 2:
+			hole_numbers = 30;
+			break;
+		case 3:
+			hole_numbers = 50;
+			break;
+		default:
+			cout << "难度选择有误" << endl;
+			return 0;
+		}
+		break;
+	case HoleNumbers:
+		int hole_numbers_min, hole_numbers_max;
+		if (!get_range(this->opt_append_arg, &hole_numbers_min, &hole_numbers_max))
+		{
+			cout << "挖空范围输入有误，请查看操作是否正确" << endl;
+			return 0;
+		}
+		srand((unsigned)time(NULL));
+		hole_numbers = hole_numbers_min + rand() % (hole_numbers_max - hole_numbers_min + 1);
+		cout << "挖空个数为" << hole_numbers << endl;
+		break;
+	case OnlySolution:
+		distinct = 1;
+		break;
+	default:
+		cout << "附加参数有误" << endl;
 		return 0;
 	}
-	srand((unsigned)time(NULL));
-	hole_numbers = hole_numbers_min + rand() % (hole_numbers_max - hole_numbers_min + 1);
-	cout << "挖空个数为" << hole_numbers << endl;
 	try
 	{
 		Write_File* write_obj = new Write_File(gen_path_start);
-		if (!this->sudoku->StartGen(board_numbers, write_obj, hole_numbers))
+		if (!this->sudoku->StartGen(board_numbers, write_obj, hole_numbers, distinct))
 		{
 			cout << "初局生成失败，请检查后重试！" << endl;
 			delete write_obj;
