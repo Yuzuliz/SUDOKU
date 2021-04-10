@@ -57,104 +57,117 @@ bool opt::get_opt(int argc, char* argv[]) {
 
 bool opt::do_solve_board()
 {
-	Read_File read_obj(this->opt_type_arg);
-	while (!read_obj.read_eof())
+	try
 	{
-		if (!read_obj.read_data()) break;
-		read_obj.show_board();
-		cout << endl;
-		change_char_2_int(read_obj.board, board);
-		this->sudoku->Display("当前状态: ");
-		if (!sudoku->Backtrack())
+		Read_File read_obj(this->opt_type_arg);
+		while (!read_obj.read_eof())
 		{
-			cout << "运算失败，请检查输入是否合法！" << endl;
-			return 0;
+			if (!read_obj.read_data()) break;
+			read_obj.show_board();
+			cout << endl;
+			change_char_2_int(read_obj.board, board);
+			this->sudoku->Display("当前状态: ");
+			if (!sudoku->Backtrack())
+			{
+				cout << "运算失败，请检查输入是否合法！" << endl;
+				return 0;
+			}
+			else
+			{
+				cout << "运算成功，请查看" << Output_Path << endl;
+			}
 		}
-		else
-		{
-			cout << "运算成功，请查看" << Output_Path << endl;
-		}
+		return 1;
 	}
-	/*string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
-	string input_path = dir + "test_with_dollar.txt";
-	string output_path = dir + "sudoku.txt";*/
-	/*
-	Read_File *read_obj = new Read_File(input_path);
-	//Write_File* write_obj = new Write_File(output_path);
-
-	SUDOKU sudoku(output_path);
-	sudoku.Display("当前状态：" );
-	if (!sudoku.Backtrack())
+	catch (string msg)
 	{
-		cout << "运算失败，请检查输入是否合法！" << endl;
+		cerr << msg << endl;
+		return 0;
 	}
-	else
-	{
-		cout << "运算成功，请查看" << output_path << endl;
-	}
-	*/
-	return 1;
 }
 
 bool opt::do_end_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
 	cout << board_numbers << endl;
-	string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
-	string basic_path = dir + "basic_end.txt";
-	string gen_path = dir + "end.txt";
-	Read_File* read_obj = new Read_File(basic_path);
-	read_obj->read_data();
-	Write_File* write_obj = new Write_File(gen_path);
-	if (!this->sudoku->EndGen(board_numbers, read_obj, write_obj))
+	try
 	{
-		cout << "终局生成失败，请检查后重试！" << endl;
+		Read_File* read_obj = new Read_File(basic_path);
+		read_obj->read_data();
+		Write_File* write_obj = new Write_File(gen_path_end);
+		if (!this->sudoku->EndGen(board_numbers, read_obj, write_obj))
+		{
+			cout << "终局生成失败，请检查后重试！" << endl;
+			return 0;
+		}
+		else
+		{
+			cout << "终局生成成功，请查看" << gen_path_end << endl;
+		}
+		return 1;
+	}
+	catch (string msg)
+	{
+		cerr << msg << endl;
 		return 0;
 	}
-	else
-	{
-		cout << "终局生成成功，请查看" << gen_path << endl;
-	}
-	return 1;
 }
 
 bool opt::do_gen_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
 	int hole_numbers = atoi(this->opt_append_arg.c_str());
-	string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
-	string basic_path = dir + "basic_end.txt";
-	string gen_path = dir + "start.txt";
-	Read_File* read_obj = new Read_File(basic_path);
-	Write_File* write_obj = new Write_File(gen_path);
-	if (!this->sudoku->StartGen(board_numbers, read_obj, write_obj, hole_numbers))
+	try
 	{
-		cout << "初局生成失败，请检查后重试！" << endl;
+		Read_File* read_obj = new Read_File(basic_path);
+		Write_File* write_obj = new Write_File(gen_path_start);
+		if (!this->sudoku->StartGen(board_numbers, read_obj, write_obj, hole_numbers))
+		{
+			cout << "初局生成失败，请检查后重试！" << endl;
+			return 0;
+		}
+		else
+		{
+			cout << "初局生成成功，请查看" << gen_path_start << endl;
+		}
+		return 1;
+	}
+	catch (string msg)
+	{
+		cerr << msg << endl;
 		return 0;
 	}
-	else
-	{
-		cout << "初局生成成功，请查看" << gen_path << endl;
-	}
-	return 1;
 }
 
 bool opt::do_opt()
 {
 	if (this->opt_type == SOLVE_BOARD)
 	{
-		this->do_solve_board();
+		if (!this->do_solve_board())
+		{
+			cout << "解局失败，请查看操作是否正确" << endl;
+			return 0;
+		}
 	}
 	else if (this->opt_type == END_BOARD)
 	{
-		this->do_end_board();
+		if (!this->do_end_board())
+		{
+			cout << "终局生成失败，请查看操作是否正确" << endl;
+			return 0;
+		}
 	}
 	else if (this->opt_type == GEN_BOARD)
 	{
-		this->do_gen_board();
+		if (!this->do_gen_board())
+		{
+			cout << "题目生成失败，请查看操作是否正确" << endl;
+			return 0;
+		}
 	}
 	else
 	{
+		cout << "不存在的状态，请查看操作是否正确" << endl;
 		return 0;
 	}
 	return 1;

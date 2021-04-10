@@ -1,2 +1,4 @@
 D:\CODES\C++\softwareEngineering\sudoku\Debug\sudoku.exe
 D:\CODES\C++\softwareEngineering\sudoku\Debug\sudoku.pdb
+C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\Debug\sudoku.exe
+C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\Debug\sudoku.pdb

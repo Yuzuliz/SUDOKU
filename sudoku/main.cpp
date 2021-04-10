@@ -4,13 +4,28 @@
 #include "opt.h"
 
 int board[DIM][DIM] = { {0} };
-string Output_Path = "sudoku.txt";
+const string dir = "txtFiles";
+const string Output_Path = dir + "sudoku.txt";
+const string basic_path = dir + "basic_end.txt";
+const string gen_path_end = dir + "end.txt";
+const string gen_path_start = dir + "start.txt";
 const char* optstring = "c:s:n:m:r:u"; // 设置短参数类型及是否需要参数
+
+
+bool mk_txt_dir()
+{
+	//判断文件夹是否存在，不存在则创建
+	if (_access(dir.c_str(), 0) == -1)
+	{
+		if (_mkdir(dir.c_str()) == -1)
+			return 0;
+	}
+	return 1;
+}
 
 int main(int argc,char* argv[])
 {
 	//输入错误字符检查，少输、多输检查，行列块重复检查
-	
 	opt my_opt;
 	// 参数解析
 	if (!my_opt.get_opt(argc, argv))
@@ -20,26 +35,15 @@ int main(int argc,char* argv[])
 	}
 	cout << "参数解析结束" << endl;
 
-	//输入错误字符检查，少输、多输检查，行列块重复检查
-	string inputPath = "test.txt";
+	if (!mk_txt_dir())
+	{
+		cout << "文件夹生成失败，请查看" << endl;
+		return 0;
+	}
 
-	my_opt.do_opt();	
+	//输入错误字符检查，少输、多输检查，行列块重复检查
+
+	my_opt.do_opt();  // 根据参数进行相应操作
+
 	return 0;
 }
-
-/*if (backtrack())
-{
-	cout << "填充后形态为：" << endl;
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			cout << board[i][j] << ' ';
-		}
-		cout << endl;
-	}
-}
-else
-{
-	cout << "运算失败，请检查输入是否合法！" << endl;
-}*/
