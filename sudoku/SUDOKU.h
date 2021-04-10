@@ -33,6 +33,6 @@ public:
 //void move_left(int* arr, int arr_num, int k);
 
 //ÖÕ¾ÖÉú³É
-string align(char a[],int N=DIM);
+string align_string(string a);
 
 #endif // !_SUDOKU_H
