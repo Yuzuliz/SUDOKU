@@ -11,20 +11,20 @@ enum { Difficulty = 1, HoleNumbers, OnlySolution };
 class opt
 {
 public:
-	opt() :opt_type(0), opt_append(0) { sudoku = new SUDOKU(Output_Path); }
-	~opt();
-	bool get_opt(int argc, char* argv[]);
-	bool do_solve_board();
-	bool do_end_board();
-	bool do_gen_board();
-	bool do_opt();
+    opt() :opt_type(0), opt_append(0) { sudoku = new SUDOKU(Output_Path); }
+    ~opt();
+    bool get_opt(int argc, char* argv[]);
+    bool do_solve_board();
+    bool do_end_board();
+    bool do_gen_board();
+    bool do_opt();
 
 private:
-	int opt_type;
-	string opt_type_arg;
-	int opt_append;
-	string opt_append_arg;
-	SUDOKU* sudoku;
+    int opt_type;
+    string opt_type_arg;
+    int opt_append;
+    string opt_append_arg;
+    SUDOKU* sudoku;
 
 };
 

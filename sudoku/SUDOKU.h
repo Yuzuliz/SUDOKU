@@ -10,20 +10,20 @@
 
 class SUDOKU
 {
-	string Output_Path;
+    string Output_Path;
 public:
-	SUDOKU() {};
-	SUDOKU(string output) :Output_Path(output) {};
+    SUDOKU() {};
+    SUDOKU(string output) :Output_Path(output) {};
 
-	bool CorrectPlace(int x, int y);
+    bool CorrectPlace(int x, int y);
 
-	void Display(Write_File *write_obj, string ps = "");
+    void Display(Write_File *write_obj, string ps = "");
 
-	int Backtrack(Write_File *write_obj, int t = 0);
+    int Backtrack(Write_File *write_obj, int t = 0);
 
-	bool EndGen(int end_boards, Write_File *write_out);
+    bool EndGen(int end_boards, Write_File *write_out);
 
-	bool StartGen(int start_boards, Write_File* write_out, int blanks = 25, bool distinct=0);
+    bool StartGen(int start_boards, Write_File* write_out, int blanks = 25, bool distinct=0);
 };
 
 ////·´×ª
