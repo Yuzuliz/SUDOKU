@@ -27,6 +27,9 @@
     <ClCompile Include="File_Operation.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="opt.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SUDOKU.h">
@@ -39,6 +42,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="File_Operation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="opt.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

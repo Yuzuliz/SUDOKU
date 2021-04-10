@@ -16,6 +16,7 @@
 
 #define DIM 9
 extern int board[DIM][DIM];
+extern string outputPath;
 using namespace std;
 
 #endif // !_COMMON_H
