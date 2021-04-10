@@ -102,7 +102,7 @@ bool SUDOKU::CorrectPlace(int x, int y)
 	return true;
 }
 
-void SUDOKU::Display(string ps)
+void SUDOKU::Display(Write_File *write_obj, string ps)
 {
 	string result;
 	stringstream sstream;
@@ -126,15 +126,8 @@ void SUDOKU::Display(string ps)
 	sstream << "-------------------------\n";
 	
 	result = sstream.str();
-	try
-	{
-		Write_File write_obj(Output_Path);
-		write_obj.write_data(result);
-	}
-	catch (string msg)
-	{
-		cerr << msg << endl;
-	}
+
+	write_obj->write_data(result);
 }
 
 bool SUDOKU::EndGen(int end_boards, Read_File *read_in, Write_File *write_out)
@@ -200,7 +193,7 @@ bool SUDOKU::StartGen(int start_boards, Read_File* read_in, Write_File* write_ou
 	return true;
 }
 
-bool SUDOKU::Backtrack(int t)
+bool SUDOKU::Backtrack(Write_File*write_obj, int t)
 {
 	if (t < 0 || t > DIM * DIM)
 	{
@@ -210,14 +203,14 @@ bool SUDOKU::Backtrack(int t)
 	// 已经访问了棋盘上的所有位置
 	if (t == DIM*DIM)
 	{
-		Display("终局状态：");
+		Display(write_obj, "终局状态：");
 		return true;
 	}
 	int x = t / DIM, y = t % DIM;
 	// 如果这个位置上本来就有值，那就访问下一个位置
 	if (board[x][y])
 	{
-		return Backtrack(t + 1);
+		return Backtrack(write_obj, t + 1);
 	}
 	// 该位置为空，则尝试所有的数
 	else
@@ -230,7 +223,7 @@ bool SUDOKU::Backtrack(int t)
 			// 是否有重复
 			if (CorrectPlace(x, y))
 			{
-				resultFlag = resultFlag && Backtrack(t + 1);
+				resultFlag = resultFlag && Backtrack(write_obj, t + 1);
 			}
 		}
 		board[x][y] = 0;

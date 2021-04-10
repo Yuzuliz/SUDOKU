@@ -4,7 +4,7 @@
 Write_File::Write_File(string file)
 {
 	// 输出
-	this->WriteFile.open(file, ios::out|ios::app);
+	this->WriteFile.open(file, ios::out);
 	if(!this->WriteFile.is_open()) 
 	{
 		throw "输出文件打开失败";

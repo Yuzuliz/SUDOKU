@@ -60,16 +60,18 @@ bool opt::do_solve_board()
 	try
 	{
 		Read_File read_obj(this->opt_type_arg);
+		Write_File *write_obj = new Write_File(Output_Path);
 		while (!read_obj.read_eof())
 		{
 			if (!read_obj.read_data()) break;
 			read_obj.show_board();
 			cout << endl;
 			change_char_2_int(read_obj.board, board);
-			this->sudoku->Display("当前状态: ");
-			if (!sudoku->Backtrack())
+			this->sudoku->Display(write_obj, "当前状态: ");
+			if (!sudoku->Backtrack(write_obj))
 			{
 				cout << "运算失败，请检查输入是否合法！" << endl;
+				delete write_obj;
 				return 0;
 			}
 			else
@@ -77,6 +79,7 @@ bool opt::do_solve_board()
 				cout << "运算成功，请查看" << Output_Path << endl;
 			}
 		}
+		delete write_obj;
 		return 1;
 	}
 	catch (string msg)
@@ -98,12 +101,16 @@ bool opt::do_end_board()
 		if (!this->sudoku->EndGen(board_numbers, read_obj, write_obj))
 		{
 			cout << "终局生成失败，请检查后重试！" << endl;
+			delete read_obj;
+			delete write_obj;
 			return 0;
 		}
 		else
 		{
 			cout << "终局生成成功，请查看" << gen_path_end << endl;
 		}
+		delete read_obj;
+		delete write_obj;
 		return 1;
 	}
 	catch (string msg)
@@ -124,12 +131,16 @@ bool opt::do_gen_board()
 		if (!this->sudoku->StartGen(board_numbers, read_obj, write_obj, hole_numbers))
 		{
 			cout << "初局生成失败，请检查后重试！" << endl;
+			delete read_obj;
+			delete write_obj;
 			return 0;
 		}
 		else
 		{
 			cout << "初局生成成功，请查看" << gen_path_start << endl;
 		}
+		delete read_obj;
+		delete write_obj;
 		return 1;
 	}
 	catch (string msg)
