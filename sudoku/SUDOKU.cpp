@@ -202,7 +202,7 @@ bool SUDOKU::StartGen(int start_boards, Read_File* read_in, Write_File* write_ou
 
 bool SUDOKU::Backtrack(int t)
 {
-	if (t < 1 || t > DIM * DIM)
+	if (t < 0 || t > DIM * DIM)
 	{
 		cout << "回溯出现问题" << endl;
 		return false;
