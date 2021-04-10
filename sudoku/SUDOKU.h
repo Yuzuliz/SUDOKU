@@ -17,20 +17,22 @@ public:
 
 	bool CorrectPlace(int x, int y);
 
-	void Display(Write_File *write_obj, string ps = "");
+	void Initial(string output="");
 
-	bool Backtrack(Write_File *write_obj, int t = 0);
+	void Display(string ps="");
 
-	bool EndGen(int end_boards,Read_File *read_in,Write_File *write_out);
+	bool Backtrack(int t = 0);
 
-	bool StartGen(int start_boards, Read_File* read_in, Write_File* write_out, int blanks = 25);
+	bool EndGen(int end_boards,Write_File *write_out);
+
+	bool StartGen(int start_boards, Write_File* write_out, int blanks = 25);
 };
 
-////反转
-//void reverse(int* arr, int begin, int end);
-//
-////左移k位
-//void move_left(int* arr, int arr_num, int k);
+//反转
+void reverse(int* arr, int begin, int end);
+
+//左移k位
+void move_left(int* arr, int arr_num, int k);
 
 //终局生成
 string align(char a[],int N=DIM);

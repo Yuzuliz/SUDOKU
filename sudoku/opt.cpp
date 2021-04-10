@@ -57,128 +57,102 @@ bool opt::get_opt(int argc, char* argv[]) {
 
 bool opt::do_solve_board()
 {
-	try
+	Read_File read_obj(this->opt_type_arg);
+	while (!read_obj.read_eof())
 	{
-		Read_File read_obj(this->opt_type_arg);
-		Write_File *write_obj = new Write_File(Output_Path);
-		while (!read_obj.read_eof())
+		if (!read_obj.read_data()) break;
+		read_obj.show_board();
+		cout << endl;
+		change_char_2_int(read_obj.board, board);
+		this->sudoku->Display("当前状态: ");
+		if (!sudoku->Backtrack())
 		{
-			if (!read_obj.read_data()) break;
-			read_obj.show_board();
-			cout << endl;
-			change_char_2_int(read_obj.board, board);
-			this->sudoku->Display(write_obj, "当前状态: ");
-			if (!sudoku->Backtrack(write_obj))
-			{
-				cout << "运算失败，请检查输入是否合法！" << endl;
-				delete write_obj;
-				return 0;
-			}
-			else
-			{
-				cout << "运算成功，请查看" << Output_Path << endl;
-			}
+			cout << "运算失败，请检查输入是否合法！" << endl;
+			return 0;
 		}
-		delete write_obj;
-		return 1;
+		else
+		{
+			cout << "运算成功，请查看" << Output_Path << endl;
+		}
 	}
-	catch (string msg)
+	/*string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
+	string input_path = dir + "test_with_dollar.txt";
+	string output_path = dir + "sudoku.txt";*/
+	/*
+	Read_File *read_obj = new Read_File(input_path);
+	//Write_File* write_obj = new Write_File(output_path);
+
+	SUDOKU sudoku(output_path);
+	sudoku.Display("当前状态：" );
+	if (!sudoku.Backtrack())
 	{
-		cerr << msg << endl;
-		return 0;
+		cout << "运算失败，请检查输入是否合法！" << endl;
 	}
+	else
+	{
+		cout << "运算成功，请查看" << output_path << endl;
+	}
+	*/
+	return 1;
 }
 
 bool opt::do_end_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
-	cout << board_numbers << endl;
-	try
+	//cout << board_numbers << endl;
+	string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
+	//string basic_path = dir + "basic_end.txt";
+	string gen_path = dir + "end.txt";
+	//Read_File* read_obj = new Read_File(basic_path);
+	//read_obj->read_data();
+	Write_File *write_obj = new Write_File(gen_path);
+	if (!this->sudoku->EndGen(board_numbers, write_obj))
 	{
-		Read_File* read_obj = new Read_File(basic_path);
-		read_obj->read_data();
-		Write_File* write_obj = new Write_File(gen_path_end);
-		if (!this->sudoku->EndGen(board_numbers, read_obj, write_obj))
-		{
-			cout << "终局生成失败，请检查后重试！" << endl;
-			delete read_obj;
-			delete write_obj;
-			return 0;
-		}
-		else
-		{
-			cout << "终局生成成功，请查看" << gen_path_end << endl;
-		}
-		delete read_obj;
-		delete write_obj;
-		return 1;
-	}
-	catch (string msg)
-	{
-		cerr << msg << endl;
+		cout << "终局生成失败，请检查后重试！" << endl;
 		return 0;
 	}
+	else
+	{
+		cout << "终局生成成功，请查看" << gen_path << endl;
+	}
+	return 1;
 }
 
 bool opt::do_gen_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
 	int hole_numbers = atoi(this->opt_append_arg.c_str());
-	try
+	string dir = "D:\\CODES\\C++\\softwareEngineering\\sudoku\\Debug\\txtFiles\\";
+	string gen_path = dir + "start.txt";
+	Write_File* write_obj = new Write_File(gen_path);
+	if (!this->sudoku->StartGen(board_numbers,write_obj, hole_numbers))
 	{
-		Read_File* read_obj = new Read_File(basic_path);
-		Write_File* write_obj = new Write_File(gen_path_start);
-		if (!this->sudoku->StartGen(board_numbers, read_obj, write_obj, hole_numbers))
-		{
-			cout << "初局生成失败，请检查后重试！" << endl;
-			delete read_obj;
-			delete write_obj;
-			return 0;
-		}
-		else
-		{
-			cout << "初局生成成功，请查看" << gen_path_start << endl;
-		}
-		delete read_obj;
-		delete write_obj;
-		return 1;
-	}
-	catch (string msg)
-	{
-		cerr << msg << endl;
+		cout << "初局生成失败，请检查后重试！" << endl;
 		return 0;
 	}
+	else
+	{
+		cout << "初局生成成功，请查看" << gen_path << endl;
+	}
+	return 1;
 }
 
 bool opt::do_opt()
 {
 	if (this->opt_type == SOLVE_BOARD)
 	{
-		if (!this->do_solve_board())
-		{
-			cout << "解局失败，请查看操作是否正确" << endl;
-			return 0;
-		}
+		this->do_solve_board();
 	}
 	else if (this->opt_type == END_BOARD)
 	{
-		if (!this->do_end_board())
-		{
-			cout << "终局生成失败，请查看操作是否正确" << endl;
-			return 0;
-		}
+		this->do_end_board();
 	}
 	else if (this->opt_type == GEN_BOARD)
 	{
-		if (!this->do_gen_board())
-		{
-			cout << "题目生成失败，请查看操作是否正确" << endl;
-			return 0;
-		}
+		this->do_gen_board();
 	}
 	else
 	{
-		cout << "不存在的状态，请查看操作是否正确" << endl;
 		return 0;
 	}
 	return 1;
