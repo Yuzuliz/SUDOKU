@@ -20,25 +20,21 @@
 //	reverse(arr, 0, arr_num - 1);
 //}
 
-string align(string a,int N)
+string align_string(string a)
 {
-	if (N <= 0 || N > 1000000) return "";
-	int k = 0;
-	short int shift[DIM-1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+	short int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
 	short int index[DIM] = { 0,1,2,3,4,5,6,7,8 };
 	string result = "";
 	do {
 		for (int i = 0; i < DIM; i++)
 		{
-			result = result +  a[index[i]] + ' ';
+			result = result + a[index[i]] + ' ';
 		}
 		result += "\n";
 		int cur_pos;
-		// 根据第一行创捷后面的行
 		for (int line = 1; line < DIM; line++)
 		{
 			cur_pos = shift[line - 1];
-			// 左移得下一行
 			for (int j = 0; j < DIM; j++, cur_pos++)
 			{
 				cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
@@ -46,9 +42,8 @@ string align(string a,int N)
 			}
 			result += "\n";
 		}
-		k++;
 		result += "\n";
-	} while (next_permutation(index, index + DIM) && k < N);
+	} while (next_permutation(index, index + DIM));
 	return result;
 }
 
@@ -130,14 +125,35 @@ void SUDOKU::Display(Write_File *write_obj, string ps)
 	write_obj->write_data(result);
 }
 
-bool SUDOKU::EndGen(int end_boards, Read_File *read_in, Write_File *write_out)
+bool SUDOKU::EndGen(int end_boards, Write_File* write_out)
 {
-	if (end_boards > 1000000 || end_boards < 1)
+	string result = "";
+	string first_line;
+	short int diff[DIM], index, j;
+	char c;
+	srand((unsigned)time(NULL));
+	for (int i = 0; i < end_boards; i++)
 	{
-		cout << "终局数量不在程序接受范围内" << endl;
-		return 0;
+		for (int j = 0; j < DIM; j++)
+		{
+			diff[j] = 0;
+		}
+		first_line = "";
+		j = 0;
+		while (j < DIM)
+		{
+			index = rand() % DIM;
+			if (diff[index])
+			{
+				continue;
+			}
+			c = index + 1 + '0';
+			first_line = first_line + c;
+			diff[index] = 1;
+			j++;
+		}
+		result = result + align_string(first_line);
 	}
-	string result = align(read_in->get_first_line(), end_boards);
 	if (result == "")
 	{
 		return false;
@@ -146,26 +162,65 @@ bool SUDOKU::EndGen(int end_boards, Read_File *read_in, Write_File *write_out)
 	return true;
 }
 
-bool SUDOKU::StartGen(int start_boards, Read_File* read_in, Write_File* write_out, int blanks)
+bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks)
 {
 	if (blanks < 20 || blanks > 55)
 	{
 		return false;
 	}
-	int ran_i, ran_j, i, j, k, boards;
-	string result="";
-	for (boards = 0; boards < start_boards; boards++)
+	int ran_i, ran_j, i, j, k = 0, cur_pos, boards_number = 0;
+	int diff[DIM];
+	string result = "";
+	char temp_board[DIM][DIM], c;
+	int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+	int index[DIM] = { 0,1,2,3,4,5,6,7,8 };
+	srand((unsigned)time(NULL));
+	for (; boards_number < start_boards; boards_number++)
 	{
-		read_in->read_data();
+		//生成终局
+		for (int j = 0; j < DIM; j++)
+		{
+			diff[j] = 0;
+		}
+		j = 0;
+		k = 0;
+		while (j < DIM)
+		{
+			i = rand() % DIM;
+			if (diff[i])
+			{
+				continue;
+			}
+			c = i + 1 + '0';
+			temp_board[0][k++] = c;
+			diff[i] = 1;
+			j++;
+		}
+
+		for (int i = 0; i < DIM; i++)
+			cout << temp_board[0][i] << " ";
+		cout << endl << endl;
+
+		for (int line = 1; line < DIM; line++)
+		{
+			cur_pos = shift[line - 1];
+			for (int j = 0; j < DIM; j++, cur_pos++)
+			{
+				cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
+				temp_board[line][j] = temp_board[0][index[cur_pos]];
+			}
+		}
+
+		//挖空
 		for (i = 0; i < DIM; i++)
 		{
 			j = 0;
 			while (j < 2)
 			{
 				ran_j = rand() % DIM;
-				if (read_in->board[i][ran_j] == '$')
+				if (temp_board[i][ran_j] == '$')
 					continue;
-				read_in->board[i][ran_j] = '$';
+				temp_board[i][ran_j] = '$';
 				j++;
 			}
 		}
@@ -174,16 +229,16 @@ bool SUDOKU::StartGen(int start_boards, Read_File* read_in, Write_File* write_ou
 		{
 			ran_i = rand() % DIM;
 			ran_j = rand() % DIM;
-			if (read_in->board[ran_i][ran_j] == '$')
+			if (temp_board[ran_i][ran_j] == '$')
 				continue;
-			read_in->board[ran_i][ran_j] = '$';
+			temp_board[ran_i][ran_j] = '$';
 			k++;
 		}
 		for (int i = 0; i < DIM; i++)
 		{
 			for (int j = 0; j < DIM; j++)
 			{
-				result = result + read_in->board[i][j] + ' ';
+				result = result + temp_board[i][j] + ' ';
 			}
 			result = result + '\n';
 		}

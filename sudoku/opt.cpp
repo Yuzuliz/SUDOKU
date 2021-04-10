@@ -2,6 +2,26 @@
 #include "File_Operation.h"
 #include "SUDOKU.h"
 
+bool get_range(string arg, int* range_min, int* range_max)
+{
+	cout << "开始获取范围" << endl;
+	unsigned int i = 0;
+	for (; i < arg.size(); i++)
+	{
+		if (arg[i] == '~') break;
+	}
+	if (i <= 0 || i >= arg.size() - 1) return 0;
+	string range_min_str = "", range_max_str = "";
+	for (unsigned int j = 0; j < i; j++) range_min_str = range_min_str + arg[j];
+	for (unsigned int j = i + 1; j < arg.size(); j++) range_max_str = range_max_str + arg[j];
+	range_min_str = range_min_str + "\0";
+	range_max_str = range_max_str + "\0";
+	cout << "范围获取结束" << endl;
+	*range_min = atoi(range_min_str.c_str());
+	*range_max = atoi(range_max_str.c_str());
+	return 1;
+}
+
 opt::~opt()
 {
 	delete this->sudoku;
@@ -82,7 +102,7 @@ bool opt::do_solve_board()
 		delete write_obj;
 		return 1;
 	}
-	catch (string msg)
+	catch (const char* msg)
 	{
 		cerr << msg << endl;
 		return 0;
@@ -95,25 +115,19 @@ bool opt::do_end_board()
 	cout << board_numbers << endl;
 	try
 	{
-		Read_File* read_obj = new Read_File(basic_path);
-		read_obj->read_data();
 		Write_File* write_obj = new Write_File(gen_path_end);
-		if (!this->sudoku->EndGen(board_numbers, read_obj, write_obj))
+		if (!this->sudoku->EndGen(board_numbers, write_obj))
 		{
 			cout << "终局生成失败，请检查后重试！" << endl;
-			delete read_obj;
-			delete write_obj;
 			return 0;
 		}
 		else
 		{
 			cout << "终局生成成功，请查看" << gen_path_end << endl;
 		}
-		delete read_obj;
-		delete write_obj;
 		return 1;
 	}
-	catch (string msg)
+	catch (const char* msg)
 	{
 		cerr << msg << endl;
 		return 0;
@@ -123,15 +137,21 @@ bool opt::do_end_board()
 bool opt::do_gen_board()
 {
 	int board_numbers = atoi(this->opt_type_arg.c_str());
-	int hole_numbers = atoi(this->opt_append_arg.c_str());
+	int hole_numbers_min, hole_numbers_max, hole_numbers;
+	if (!get_range(this->opt_append_arg, &hole_numbers_min, &hole_numbers_max))
+	{
+		cout << "挖空范围输入有误，请查看操作是否正确" << endl;
+		return 0;
+	}
+	srand((unsigned)time(NULL));
+	hole_numbers = hole_numbers_min + rand() % (hole_numbers_max - hole_numbers_min + 1);
+	cout << "挖空个数为" << hole_numbers << endl;
 	try
 	{
-		Read_File* read_obj = new Read_File(basic_path);
 		Write_File* write_obj = new Write_File(gen_path_start);
-		if (!this->sudoku->StartGen(board_numbers, read_obj, write_obj, hole_numbers))
+		if (!this->sudoku->StartGen(board_numbers, write_obj, hole_numbers))
 		{
 			cout << "初局生成失败，请检查后重试！" << endl;
-			delete read_obj;
 			delete write_obj;
 			return 0;
 		}
@@ -139,11 +159,10 @@ bool opt::do_gen_board()
 		{
 			cout << "初局生成成功，请查看" << gen_path_start << endl;
 		}
-		delete read_obj;
 		delete write_obj;
 		return 1;
 	}
-	catch (string msg)
+	catch (const char* msg)
 	{
 		cerr << msg << endl;
 		return 0;

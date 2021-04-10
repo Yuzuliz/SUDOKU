@@ -21,9 +21,9 @@ public:
 
 	bool Backtrack(Write_File *write_obj, int t = 0);
 
-	bool EndGen(int end_boards,Read_File *read_in,Write_File *write_out);
+	bool EndGen(int end_boards, Write_File *write_out);
 
-	bool StartGen(int start_boards, Read_File* read_in, Write_File* write_out, int blanks = 25);
+	bool StartGen(int start_boards, Write_File* write_out, int blanks = 25);
 };
 
 ////·´×ª

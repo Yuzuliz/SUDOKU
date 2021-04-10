@@ -28,4 +28,6 @@ private:
 
 };
 
+bool get_range(string arg, int* range_min, int* range_max);
+
 #endif // !_OPT_H

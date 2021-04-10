@@ -42,6 +42,7 @@ Read_File::Read_File(string file)
 {
 	// 输入
 	this->ReadFile.open(file, ios::in);
+	cout << "输入文件为" << file << endl;
 	if (!this->ReadFile.is_open())
 	{
 		throw "输入文件打开失败";

@@ -6,7 +6,6 @@
 int board[DIM][DIM] = { {0} };
 const string dir = "txtFiles";
 const string Output_Path = dir + "/sudoku.txt";
-const string basic_path = dir + "/basic_end.txt";
 const string gen_path_end = dir + "/end.txt";
 const string gen_path_start = dir + "/start.txt";
 const char* optstring = "c:s:n:m:r:u"; // 设置短参数类型及是否需要参数
