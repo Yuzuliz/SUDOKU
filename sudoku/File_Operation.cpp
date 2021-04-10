@@ -4,7 +4,7 @@ using namespace std;
 Write_File::Write_File(string file)
 {
 	// 输出
-	this->WriteFile.open(file, ios::out);
+	this->WriteFile.open(file, ios::out|ios::app);
 	if(!WriteFile.is_open()) 
 	{
 		throw "文件打开失败";
