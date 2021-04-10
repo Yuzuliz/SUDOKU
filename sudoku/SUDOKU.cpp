@@ -23,8 +23,34 @@ void move_left(int* arr, int k, int arr_num)
 	reverse(arr, 0, arr_num - 1);
 }
 
-string align(int a[],int N)
+string align(string a,int N)
 {
+	int k = 0;
+	short int shift[DIM-1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+	short int index[DIM] = { 0,1,2,3,4,5,6,7,8 };
+	string result = "";
+	do {
+		for (int i = 0; i < DIM; i++)
+		{
+			result = result +  a[index[i]] + ' ';
+		}
+		result += "\n";
+		int cur_pos;
+		for (int line = 1; line < DIM; line++)
+		{
+			cur_pos = shift[line - 1];
+			for (int j = 0; j < DIM; j++, cur_pos++)
+			{
+				cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
+				result = result + a[index[cur_pos]] + ' ';
+			}
+			result += "\n";
+		}
+		k++;
+		result += "\n";
+	} while (next_permutation(index, index + DIM) && k < N);
+	return result;
+	/*
 	int k = 1;
 	short int shift[8] = { 3, 6, 1, 4, 7, 2, 5, 8 };
 	stringstream sstream;
@@ -49,6 +75,7 @@ string align(int a[],int N)
 		sstream << "---->>><<<----\n";
 	} while (next_permutation(a, a + DIM) && k < N);
 	return sstream.str();
+	*/
 }
 
 bool SUDOKU::CorrectPlace(int x, int y)
@@ -95,16 +122,11 @@ bool SUDOKU::CorrectPlace(int x, int y)
 	return true;
 }
 
-SUDOKU::SUDOKU(string output)
+void SUDOKU::Initial(string output)
 {
-	this->outputPath = output;
-}
-
-void SUDOKU::Initial(string input,string output)
-{
-	outputPath = output;
+	this->Output_Path = output;
 	//文件路径，输入参数，
-	cout << "请输入初始形态：" << endl;
+	/*cout << "请输入初始形态：" << endl;
 	string temp;
 	for (int i = 0; i < 9; i++)
 	{
@@ -113,28 +135,13 @@ void SUDOKU::Initial(string input,string output)
 		{
 			board[i][j] = temp[j] - '0';
 		}
-	}
+	}*/
 }
-
-/*
-void SUDOKU::Shift() {
-	move_left(board[1], 3, DIM);
-	move_left(board[2], 6, DIM);
-	move_left(board[3], 1, DIM);
-	move_left(board[4], 4, DIM);
-	move_left(board[5], 7, DIM);
-	move_left(board[6], 2, DIM);
-	move_left(board[7], 5, DIM);
-	move_left(board[8], 8, DIM);
-}*/
 
 void SUDOKU::Display(string ps)
 {
-	
-	//out << ps << endl;
 	string result;
 	stringstream sstream;
-	bool is_result = true;
 	sstream << ps << '\n';
 	for (int i = 0; i < 9; i++)
 	{
@@ -146,7 +153,6 @@ void SUDOKU::Display(string ps)
 			}
 			else
 			{
-				is_result = false;
 				sstream << "$ ";
 			}
 
@@ -157,11 +163,7 @@ void SUDOKU::Display(string ps)
 	
 	//out << result << endl;
 	result = sstream.str();
-	if (is_result)
-	{
-		result += align(board[0]);
-	}
-	Write_File write_obj(outputPath);
+	Write_File write_obj(Output_Path);
 	// ofstream out(outputPath, ios::out|ios::app);
 	//if (!out.is_open())
 	//{
@@ -173,7 +175,89 @@ void SUDOKU::Display(string ps)
 	write_obj.write_data(result);
 }
 
+bool SUDOKU::EndGen(int end_boards, Read_File *read_in, Write_File *write_out)
+{
+	string result = align(read_in->get_first_line(), end_boards);
+	if (result == "")
+	{
+		return false;
+	}
+	write_out->write_data(result);
+	return true;
+}
 
+bool SUDOKU::StartGen(int start_boards, Read_File* read_in, Write_File* write_out, int blanks)
+{
+	if (blanks < 20 || blanks > 55)
+	{
+		return false;
+	}
+	int ran_i,ran_j,i,j,k,boards;
+	string result="";
+	for (boards = 0; boards < start_boards; boards++)
+	{
+		read_in->read_data();
+		for (i = 0; i < DIM; i++)
+		{
+			j = 0;
+			while (j < 2)
+			{
+				ran_j = rand() % 9;
+				if (read_in->board[i][ran_j] == '$')
+					continue;
+				read_in->board[i][ran_j] = '$';
+				j++;
+			}
+		}
+		k = 0;
+		while (k < blanks - 18)
+		{
+			ran_i = rand() % 9;
+			ran_j = rand() % 9;
+			if (read_in->board[ran_i][ran_j] == '$')
+				continue;
+			read_in->board[ran_i][ran_j] = '$';
+			k++;
+		}
+		for (int i = 0; i < DIM; i++)
+		{
+			for (int j = 0; j < DIM; j++)
+			{
+				result = result + read_in->board[i][j] + ' ';
+			}
+			result = result + '\n';
+		}
+		result = result + '\n';
+	}
+	write_out->write_data(result);
+	/*string result = align(read_in->get_first_line(), 1);
+	string current_board[DIM];
+	for (int i = 0; i < DIM; i++)
+	{
+		current_board[i] = "";
+	}
+	for (int i = 0; i < DIM; i++)
+	{
+		int k = 0;
+		for (int j = 0; j < 2*DIM; j++)
+		{
+			if (result[2 * DIM * i + j] == ' ')
+				continue;
+			if (result[2 * DIM * i + j] == '\n')
+				break;
+			current_board[i] = current_board[i] + result[2 * DIM * i + j];
+		}
+	}
+	for (int i = 0; i < DIM; i++)
+	{
+		cout << current_board[i] << endl;
+	}
+	if (result == "")
+	{
+		return false;
+	}*/
+	return true;
+}
 
 bool SUDOKU::Backtrack(int t)
 {

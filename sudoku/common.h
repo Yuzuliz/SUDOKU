@@ -14,8 +14,11 @@
 #include "getopt.h"                // 包含头文件
 #pragma comment(lib, "getopt.lib")   // 加载静态库文件（Windows）
 
+using namespace std;
+
 #define DIM 9
 extern int board[DIM][DIM];
-using namespace std;
+extern string Output_Path;
+extern const char* optstring;
 
 #endif // !_COMMON_H
