@@ -1,22 +1,21 @@
-#pragma once
-#ifndef _COMMON_H
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+#ifndef SUDOKU_COMMON_H_
 
-#define _COMMON_H
+#define SUDOKU_COMMON_H_
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <direct.h>
+#include <io.h>
+#include <time.h>
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include <math.h>
-#include <direct.h>
-#include <io.h>
-#include <time.h>
-
-#include "getopt.h"                // 包含头文件
-#pragma comment(lib, "getopt.lib")   // 加载静态库文件（Windows）
+#include "getopt.h"
+#pragma comment(lib, "getopt.lib")
 
 using namespace std;
 
@@ -29,4 +28,5 @@ extern const string gen_path_start;
 extern const string distinct_result;
 extern const char* optstring;
 
-#endif // !_COMMON_H
+
+#endif  // SUDOKU_COMMON_H_

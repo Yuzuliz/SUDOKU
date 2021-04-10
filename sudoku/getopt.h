@@ -15,8 +15,8 @@
    along with this program; if not, write to the Free Software
    Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-#ifndef _GETOPT_H
-#define _GETOPT_H 1
+#ifndef SUDOKU_GETOPT_H_
+#define SUDOKU_GETOPT_H_ 1
 
 #ifdef    __cplusplus
 extern "C" {
@@ -74,8 +74,7 @@ extern int optopt;
    one).  For long options that have a zero `flag' field, `getopt'
    returns the contents of the `val' field.  */
 
-struct option
-{
+struct option{
 #if    __STDC__
   const char *name;
 #else
@@ -94,16 +93,16 @@ struct option
 #define required_argument    1
 #define optional_argument    2
 
-//#if __STDC__ || defined(PROTO)
-//#if defined(__GNU_LIBRARY__)
+// #if __STDC__ || defined(PROTO)
+// #if defined(__GNU_LIBRARY__)
 /* Many other libraries have conflicting prototypes for getopt, with
    differences in the consts, in stdlib.h.  To avoid compilation
    errors, only prototype getopt for the GNU C library.  */
-extern int getopt (int argc, char *const *argv, const char *shortopts);
-//#endif /* not __GNU_LIBRARY__ */
-extern int getopt_long (int argc, char *const *argv, const char *shortopts,
+extern int getopt(int argc, char *const *argv, const char *shortopts);
+// #endif /* not __GNU_LIBRARY__ */
+extern int getopt_long(int argc, char *const *argv, const char *shortopts,
                 const struct option *longopts, int *longind);
-extern int getopt_long_only (int argc, char *const *argv,
+extern int getopt_long_only(int argc, char *const *argv,
                  const char *shortopts,
                      const struct option *longopts, int *longind);
 
@@ -112,17 +111,16 @@ extern int getopt_long_only (int argc, char *const *argv,
                  const char *shortopts,
                      const struct option *longopts, int *longind,
                  int long_only); */
-//#else /* not __STDC__ */
-//extern int getopt ();
-//extern int getopt_long ();
-//extern int getopt_long_only ();
+// #else /* not __STDC__ */
+// extern int getopt ();
+// extern int getopt_long ();
+// extern int getopt_long_only ();
 
-//extern int _getopt_internal ();
-//#endif /* not __STDC__ */
+// extern int _getopt_internal ();
+// #endif /* not __STDC__ */
 
 #ifdef    __cplusplus
 }
 #endif
 
-#endif /* _GETOPT_H */
-
+#endif  // SUDOKU_GETOPT_H_

@@ -1,19 +1,19 @@
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+
 #pragma once
+#ifndef SUDOKU_H
+#define SUDOKU_H
 
-#ifndef _SUDOKU_H
-
-#define _SUDOKU_H
-
+#include <string>
 #include "common.h"
 #include "File_Operation.h"
 
 
-class SUDOKU
-{
+class SUDOKU {
     string Output_Path;
-public:
-    SUDOKU() {};
-    SUDOKU(string output) :Output_Path(output) {};
+ public:
+    SUDOKU() {}
+    explicit SUDOKU(string output) :Output_Path(output) {}
 
     bool CorrectPlace(int x, int y);
 
@@ -23,16 +23,11 @@ public:
 
     bool EndGen(int end_boards, Write_File *write_out);
 
-    bool StartGen(int start_boards, Write_File* write_out, int blanks = 25, bool distinct=0);
+    bool StartGen(int start_boards, Write_File* write_out,
+     int blanks = 25, bool distinct=0);
 };
 
-////反转
-//void reverse(int* arr, int begin, int end);
-//
-////左移k位
-//void move_left(int* arr, int arr_num, int k);
+// Shift the first row to get the other rows
+explicit string align_string(string a);
 
-//终局生成
-string align_string(string a);
-
-#endif // !_SUDOKU_H
+#endif  // SUDOKU_H_
