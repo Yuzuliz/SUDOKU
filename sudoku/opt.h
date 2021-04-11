@@ -4,7 +4,6 @@
 #ifndef SUDOKU_OPT_H_
 #define SUDOKU_OPT_H_
 
-#include <string>
 #include "common.h"
 #include "SUDOKU.h"
 
@@ -15,6 +14,7 @@ class opt {
  public:
     opt() :opt_type(0), opt_append(0) { sudoku = new SUDOKU(Output_Path); }
     ~opt();
+    bool get_n_arg(int &hole_num_min, int &hole_num_max, bool &distinct);
     bool get_opt(int argc, char* argv[]);
     bool do_solve_board();
     bool do_end_board();

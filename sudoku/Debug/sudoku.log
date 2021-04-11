@@ -1,6 +1,7 @@
-﻿  opt.cpp
-  getopt.c
-D:\CODES\C++\softwareEngineering\github_sudoku\sudoku\getopt.c(175,58): warning C4028: 形参 3 与声明不同
-D:\CODES\C++\softwareEngineering\github_sudoku\sudoku\getopt.c(175,58): warning C4273: “strncmp”: dll 链接不一致
-D:\Windows Kits\10\Include\10.0.18362.0\ucrt\string.h(275,22): message : 参见“strncmp”的前一个定义
-  sudoku.vcxproj -> D:\CODES\C++\softwareEngineering\github_sudoku\sudoku\Debug\sudoku.exe
+﻿  File_Operation.cpp
+  SUDOKU.cpp
+C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\SUDOKU.cpp(77,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+  main.cpp
+  opt.cpp
+  正在生成代码...
+  sudoku.vcxproj -> C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\Debug\sudoku.exe

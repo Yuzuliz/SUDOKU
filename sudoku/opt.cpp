@@ -27,6 +27,45 @@ opt::~opt() {
     delete this->sudoku;
 }
 
+bool opt::get_n_arg(int &hole_num_min, int &hole_num_max, bool &distinct) {
+    switch (this->opt_append) {
+    case 0:
+        break;
+    case Difficulty:
+        switch (atoi(this->opt_append_arg.c_str())) {
+        case 1:
+            hole_num_min = 10;
+            hole_num_max = 20;
+            break;
+        case 2:
+            hole_num_min = 30;
+            hole_num_max = 40;
+            break;
+        case 3:
+            hole_num_min = 50;
+            hole_num_max = 60;
+            break;
+        default:
+            cout << "ERROR LEVEL!" << endl;
+            return 0;
+        }
+        break;
+    case HoleNumbers:
+        if (!get_range(opt_append_arg, &hole_num_min, &hole_num_max)) {
+            cout << "ERROR RANGE!" << endl;
+            return 0;
+        }
+        break;
+    case OnlySolution:
+        distinct = 1;
+        break;
+    default:
+        cout << "ERROR ATTRIBUTE!" << endl;
+        return 0;
+    }
+    return 1;
+}
+
 bool opt::get_opt(int argc, char* argv[]) {
     int opt;
 
@@ -125,49 +164,15 @@ bool opt::do_end_board() {
 
 bool opt::do_gen_board() {
     int board_num = atoi(this->opt_type_arg.c_str());
-    int hole_num = 25;
-    int rand_span;
+    int hole_num_min = 25, hole_num_max = 55;
     bool distinct = 0;
-    switch (this->opt_append) {
-    case 0:
-        break;
-    case Difficulty:
-        switch (atoi(this->opt_append_arg.c_str())) {
-        case 1:
-            hole_num = 10;
-            break;
-        case 2:
-            hole_num = 30;
-            break;
-        case 3:
-            hole_num = 50;
-            break;
-        default:
-            cout << "ERROR LEVEL!" << endl;
-            return 0;
-        }
-        break;
-    case HoleNumbers:
-        int hole_num_min, hole_num_max;
-        if (!get_range(opt_append_arg, &hole_num_min, &hole_num_max)) {
-            cout << "ERROR RANGE!" << endl;
-            return 0;
-        }
-        srand((unsigned)time(NULL));
-        rand_span = rand() % (hole_num_max - hole_num_min + 1);
-        hole_num = hole_num_min + rand_span;
-        cout << "Number of the holes: " << hole_num << endl;
-        break;
-    case OnlySolution:
-        distinct = 1;
-        break;
-    default:
-        cout << "ERROR ATTRIBUTE!" << endl;
+    if (!this->get_n_arg(hole_num_min, hole_num_max, distinct)) {
+        cout << "get append args failed!" << endl;
         return 0;
     }
     try {
         Write_File* write_obj = new Write_File(gen_path_start);
-        if (!sudoku->StartGen(board_num, write_obj, hole_num, distinct)) {
+        if (!sudoku->StartGen(board_num, write_obj, hole_num_min, hole_num_max, distinct)) {
             cout << "Original board generation failed." << endl;
             delete write_obj;
             return 0;

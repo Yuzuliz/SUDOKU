@@ -24,7 +24,6 @@ bool mk_txt_dir() {
 }
 
 int main(int argc, char* argv[]) {
-    // error/less/more char check
     opt my_opt;
     if (!my_opt.get_opt(argc, argv)) {
         cout << "ERROR OPTION!" << endl;
@@ -37,6 +36,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
+    srand((unsigned)time(NULL));
     my_opt.do_opt();  // deal with different options
 
     return 0;

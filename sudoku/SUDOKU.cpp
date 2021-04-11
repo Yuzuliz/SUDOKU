@@ -1,12 +1,12 @@
 // Copyright 2021 Yingtong_Yu Yifei_Guo
 
 #pragma once
-#include <string>
 #include "SUDOKU.h"
 
 string align_string(string a) {
-    int16 shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
-    int16 index[DIM] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    if (a.size() != 9) a = "348276519";
+    int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+    int index[DIM] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
     string result = "";
     for (int i = 0; i < DIM; i++) {
         result = result + a[index[i]] + ' ';
@@ -23,6 +23,50 @@ string align_string(string a) {
     }
     result += "\n";
     return result;
+}
+
+string gen_first_line() {
+    int diff[DIM] = { 0 }, index, j = 0;
+    char c;
+    string first_line = "";
+    while (j < DIM) {
+        index = rand() % DIM;
+        if (diff[index]) {
+            continue;
+        }
+        c = index + 1 + '0';
+        first_line = first_line + c;
+        diff[index] = 1;
+        j++;
+    }
+    return first_line;
+}
+
+bool set_blanks(Write_File* write_out, int blanks) {
+    /*srand((unsigned)time(NULL));*/
+    if (blanks > 64 || blanks <= 0) return 0;
+    int ran_i, ran_j;
+    if (blanks >= 18) {
+        // 2 blanks each row
+        for (int i = 0; i < DIM; i++) {
+            for (int j = 0; j < 2; j++) {
+                ran_j = rand() % DIM;
+                if (write_out->board[i][ran_j] == '$')
+                    continue;
+                write_out->board[i][ran_j] = '$';
+            }
+        }
+        blanks -= 18;
+    }
+    // Random position
+    for (int k = 0; k < blanks; k++) {
+        ran_i = rand() % DIM;
+        ran_j = rand() % DIM;
+        if (write_out->board[ran_i][ran_j] == '$')
+            continue;
+        write_out->board[ran_i][ran_j] = '$';
+    }
+    return 1;
 }
 
 bool SUDOKU::CorrectPlace(int x, int y) {
@@ -83,27 +127,28 @@ void SUDOKU::Display(Write_File *write_obj, string ps) {
     write_obj->write_data(result);
 }
 
-int SUDOKU::Backtrack(Write_File* write_obj, int t) {
+int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out) {
     if (t < 0 || t > DIM * DIM) {
         cout << "ERROR POSITION!" << endl;
         return 0;
     }
     // One correct result
     if (t == DIM * DIM) {
-        Display(write_obj, "Final board: ");
+        if(write_out)
+            Display(write_obj, "Final board: ");
         return 1;
     }
     int x = t / DIM, y = t % DIM;
     // Get to the next one
     if (board[x][y]) {
-        return Backtrack(write_obj, t + 1);
+        return Backtrack(write_obj, t + 1, write_out);
     } else {
         // Empty point. Test for all the values
         int result_num = 0;
         for (int i = 1; i < DIM + 1; i++) {
             board[x][y] = i;
             if (CorrectPlace(x, y)) {
-                result_num += Backtrack(write_obj, t + 1);
+                result_num += Backtrack(write_obj, t + 1, write_out);
             }
         }
         board[x][y] = 0;
@@ -114,25 +159,9 @@ int SUDOKU::Backtrack(Write_File* write_obj, int t) {
 bool SUDOKU::EndGen(int end_boards, Write_File* write_out) {
     string result = "";
     string first_line;
-    int16 diff[DIM], index, j;
-    char c;
     srand((unsigned)time(NULL));
     for (int i = 0; i < end_boards; i++) {
-        for (int j = 0; j < DIM; j++) {
-            diff[j] = 0;
-        }
-        first_line = "";
-        j = 0;
-        while (j < DIM) {
-            index = rand() % DIM;
-            if (diff[index]) {
-                continue;
-            }
-            c = index + 1 + '0';
-            first_line = first_line + c;
-            diff[index] = 1;
-            j++;
-        }
+        first_line = gen_first_line();
         result = result + align_string(first_line);
     }
     if (result == "") {
@@ -142,37 +171,22 @@ bool SUDOKU::EndGen(int end_boards, Write_File* write_out) {
     return true;
 }
 
-bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks, bool distinct) {
-    if (blanks < 1 || blanks > 64) {
+bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks_min, int blanks_max, bool distinct) {
+    if (blanks_min < 1 || blanks_min > 64 || blanks_max < 1 || blanks_max > 64 || blanks_max < blanks_min) {
         return false;
     }
-    int ran_i, ran_j, i, j, k = 0, cur_pos;
+    int cur_pos;
     int boards_number = 0;
-    int diff[DIM];
-    string result = "";
-    char temp_board[DIM][DIM], c;
     int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
     int index[DIM] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
-    Write_File* write_distinct = new Write_File(distinct_result);
-    srand((unsigned)time(NULL));
+    /*srand((unsigned)time(NULL));*/
     while (boards_number < start_boards) {
+        int blanks = blanks_min + rand() % (blanks_max - blanks_min + 1);
+
         // Get the random first row
-        for (i = 0; i < DIM; i++) {
-            diff[i] = 0;
-        }
-        j = 0;
-        k = 0;
-        while (j < DIM) {
-            i = rand() % DIM;
-            if (diff[i]) {
-                continue;
-            }
-            c = i + 1 + '0';
-            temp_board[0][k] = c;
-            board[0][k] = i + 1;
-            k++;
-            diff[i] = 1;
-            j++;
+        string first_line = gen_first_line();
+        for (int i = 0; i < DIM; i++) {
+            write_out->board[0][i] = first_line[i];
         }
 
         // Shift the first row
@@ -180,54 +194,34 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks, bool 
             cur_pos = shift[line - 1];
             for (int j = 0; j < DIM; j++, cur_pos++) {
                 cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
-                temp_board[line][j] = temp_board[0][index[cur_pos]];
-                board[line][j] = board[0][index[cur_pos]];
+                write_out->board[line][j] = write_out->board[0][index[cur_pos]];
             }
         }
 
-        // Set blanks
-        // 2 blanks each row
-        for (i = 0; i < DIM; i++) {
-            j = 0;
-            while (j < 2) {
-                ran_j = rand() % DIM;
-                if (temp_board[i][ran_j] == '$')
-                    continue;
-                temp_board[i][ran_j] = '$';
-                board[i][ran_j] = 0;
-                j++;
-            }
+        if (!change_char_2_int(write_out->board, board)) {
+            cout << "error occured while changing char board to int board" << endl;
+            return 0;
         }
-        // Random position
-        k = 0;
-        while (k < blanks - 2*DIM) {
-            ran_i = rand() % DIM;
-            ran_j = rand() % DIM;
-            if (temp_board[ran_i][ran_j] == '$')
-                continue;
-            temp_board[ran_i][ran_j] = '$';
-            board[ran_i][ran_j] = 0;
-            k++;
+
+        // Set blanks
+        if (!set_blanks(write_out, blanks)) {
+            cout << "error occured while generating blanks" << endl;
+            return 0;
         }
 
         // Check if the answer is distinct
         if (distinct) {
-            int result_num = Backtrack(write_distinct);
-            if (result_num > 1)
+            int result_num = Backtrack(write_out, 0, 0);
+            if (result_num > 1) {
                 continue;
+            }
+ 
         }
 
         // Output
-        for (int i = 0; i < DIM; i++) {
-            for (int j = 0; j < DIM; j++) {
-                result = result + temp_board[i][j] + ' ';
-            }
-            result = result + '\n';
-        }
-        result = result + '\n';
+        write_out->write_data();
+        write_out->write_data("\n");
         boards_number++;
     }
-    write_out->write_data(result);
-    delete write_distinct;
     return true;
 }
