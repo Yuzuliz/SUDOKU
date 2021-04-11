@@ -18,7 +18,7 @@ class SUDOKU {
 
     void Display(Write_File *write_obj, string ps = "");
 
-    int Backtrack(Write_File *write_obj, int t = 0, bool write_out = 1);
+    int Backtrack(Write_File *write_obj, int t = 0, bool write_out = 1, bool distinct = 0);
 
     bool EndGen(int end_boards, Write_File *write_out);
 
@@ -28,5 +28,7 @@ class SUDOKU {
 
 // Shift the first row to get the other rows
 string align_string(string a);
+string gen_first_line();
+bool set_blanks(Write_File* write_out, int blanks);
 
 #endif  // SUDOKU_H_

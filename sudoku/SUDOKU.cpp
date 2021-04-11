@@ -51,20 +51,24 @@ bool set_blanks(Write_File* write_out, int blanks) {
         for (int i = 0; i < DIM; i++) {
             for (int j = 0; j < 2; j++) {
                 ran_j = rand() % DIM;
-                if (write_out->board[i][ran_j] == '$')
+                if (write_out->board[i][ran_j] == '$') {
+                    j--;
                     continue;
+                }
                 write_out->board[i][ran_j] = '$';
             }
         }
         blanks -= 18;
     }
     // Random position
-    for (int k = 0; k < blanks; k++) {
+    int k = 0;
+    while (k < blanks) {
         ran_i = rand() % DIM;
         ran_j = rand() % DIM;
         if (write_out->board[ran_i][ran_j] == '$')
             continue;
         write_out->board[ran_i][ran_j] = '$';
+        k++;
     }
     return 1;
 }
@@ -127,7 +131,7 @@ void SUDOKU::Display(Write_File *write_obj, string ps) {
     write_obj->write_data(result);
 }
 
-int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out) {
+int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out, bool distinct) {
     if (t < 0 || t > DIM * DIM) {
         cout << "ERROR POSITION!" << endl;
         return 0;
@@ -141,14 +145,15 @@ int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out) {
     int x = t / DIM, y = t % DIM;
     // Get to the next one
     if (board[x][y]) {
-        return Backtrack(write_obj, t + 1, write_out);
+        return Backtrack(write_obj, t + 1, write_out, distinct);
     } else {
         // Empty point. Test for all the values
         int result_num = 0;
         for (int i = 1; i < DIM + 1; i++) {
             board[x][y] = i;
             if (CorrectPlace(x, y)) {
-                result_num += Backtrack(write_obj, t + 1, write_out);
+                result_num += Backtrack(write_obj, t + 1, write_out, distinct);
+                if (distinct && result_num > 1) return result_num;
             }
         }
         board[x][y] = 0;
@@ -157,22 +162,19 @@ int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out) {
 }
 
 bool SUDOKU::EndGen(int end_boards, Write_File* write_out) {
-    string result = "";
+    if (end_boards <= 0 || end_boards > 1000000) return false;
     string first_line;
     srand((unsigned)time(NULL));
     for (int i = 0; i < end_boards; i++) {
         first_line = gen_first_line();
-        result = result + align_string(first_line);
+        write_out->write_data(align_string(first_line));
     }
-    if (result == "") {
-        return false;
-    }
-    write_out->write_data(result);
     return true;
 }
 
 bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks_min, int blanks_max, bool distinct) {
-    if (blanks_min < 1 || blanks_min > 64 || blanks_max < 1 || blanks_max > 64 || blanks_max < blanks_min) {
+    if (start_boards <= 0 || start_boards > 1000000) return false;
+    if (blanks_min < 1 || blanks_max > 64 || blanks_max < blanks_min) {
         return false;
     }
     int cur_pos;
@@ -198,20 +200,20 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks_min, i
             }
         }
 
-        if (!change_char_2_int(write_out->board, board)) {
-            cout << "error occured while changing char board to int board" << endl;
-            return 0;
-        }
-
         // Set blanks
         if (!set_blanks(write_out, blanks)) {
             cout << "error occured while generating blanks" << endl;
             return 0;
         }
 
+        if (!change_char_2_int(write_out->board, board)) {
+            cout << "error occured while changing char board to int board" << endl;
+            return 0;
+        }
+
         // Check if the answer is distinct
         if (distinct) {
-            int result_num = Backtrack(write_out, 0, 0);
+            int result_num = Backtrack(write_out, 0, 0, distinct);
             if (result_num > 1) {
                 continue;
             }
