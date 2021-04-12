@@ -143,8 +143,14 @@ bool opt::do_solve_board() {
 }
 
 bool opt::do_end_board() {
-    int board_num = atoi(this->opt_type_arg.c_str());
-    cout << board_num << endl;
+    int board_num;
+    try {
+        board_num = atoi(this->opt_type_arg.c_str());
+    }
+    catch (exception) {
+        cerr << "wrong parameter" << endl;
+        return 0;
+    }
     try {
         Write_File* write_obj = new Write_File(gen_path_end);
         if (!this->sudoku->EndGen(board_num, write_obj)) {

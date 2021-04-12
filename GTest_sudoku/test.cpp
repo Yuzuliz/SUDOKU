@@ -163,6 +163,16 @@ TEST(SUDOKUTest, CorrectPlaceTest) {
 	ASSERT_EQ(SUDOKU_obj.CorrectPlace(0, 0), 1);
 }
 
+// ²âÊÔDisplay()º¯Êý
+TEST(SUDOKUTest, DisplayTest) {
+	SUDOKU sudoku_obj;
+	Write_File write_obj("txtFiles/test/test_Display.txt");
+	for (int i = 0; i < DIM; i++)
+		for (int j = 0; j < DIM; j++)
+			board[i][j] = (i + j + 2) % DIM + 1;
+	sudoku_obj.Display(&write_obj, "test test: ");
+}
+
 // ²âÊÔBacktrack()º¯Êý
 TEST(SUDOKUTest, BacktrackTest) {
 	SUDOKU SUDOKU_obj;
@@ -190,4 +200,142 @@ TEST(SUDOKUTest, StartGenTest) {
 	ASSERT_EQ(SUDOKU_obj.StartGen(1, &write_obj, 20, 10), 0);
 	ASSERT_EQ(SUDOKU_obj.StartGen(1, &write_obj, 10, 20), 1);
 	ASSERT_EQ(SUDOKU_obj.StartGen(1, &write_obj, 30, 60, 1), 1);
+}
+
+/* opt²âÊÔ */
+// ²âÊÔget_range()º¯Êý
+TEST(optTest, GetRangeTest) {
+	int min, max;
+	ASSERT_EQ(get_range("15~", &min, &max), 0);
+	ASSERT_EQ(get_range("15", &min, &max), 0);
+	ASSERT_EQ(get_range("~15", &min, &max), 0);
+	ASSERT_EQ(get_range("10~20", &min, &max), 1);
+	ASSERT_EQ(max, 20);
+	ASSERT_EQ(min, 10);
+}
+
+// ²âÊÔget_n_arg()º¯Êý
+TEST(optTest, GetNArgTest) {
+	opt opt_obj;
+	int hole_min, hole_max;
+	bool distinct = 0;
+	opt_obj.opt_type = GEN_BOARD;
+	opt_obj.opt_type_arg = "3";
+
+	opt_obj.opt_append = 5;
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 0);
+
+	opt_obj.opt_append = Difficulty;
+	opt_obj.opt_append_arg = "0";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 0);
+	opt_obj.opt_append_arg = "4";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 0);
+	opt_obj.opt_append_arg = "1";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 1);
+	ASSERT_EQ(hole_min, 10);
+	ASSERT_EQ(hole_max, 20);
+	opt_obj.opt_append_arg = "2";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 1);
+	ASSERT_EQ(hole_min, 30);
+	ASSERT_EQ(hole_max, 40);
+	opt_obj.opt_append_arg = "3";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 1);
+	ASSERT_EQ(hole_min, 50);
+	ASSERT_EQ(hole_max, 60);
+
+	opt_obj.opt_append = HoleNumbers;
+	opt_obj.opt_append_arg = "1";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 0);
+	opt_obj.opt_append_arg = "20~30";
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 1);
+	ASSERT_EQ(hole_min, 20);
+	ASSERT_EQ(hole_max, 30);
+
+	opt_obj.opt_append = OnlySolution;
+	ASSERT_EQ(opt_obj.get_n_arg(hole_min, hole_max, distinct), 1);
+	ASSERT_EQ(distinct, 1);
+}
+
+// ²âÊÔdo_solve_board()º¯Êý
+TEST(optTest, DoSolveBoardTest) {
+	opt opt_obj;
+	opt_obj.opt_type = SOLVE_BOARD;
+	opt_obj.opt_type_arg = "txtFiles/start.txt";
+	ASSERT_EQ(opt_obj.do_solve_board(), 1);
+	opt_obj.opt_type_arg = "txtFiles/no_exist.txt";
+	ASSERT_EQ(opt_obj.do_solve_board(), 0);
+}
+
+// ²âÊÔdo_end_board()º¯Êý
+TEST(optTest, DoEndBoardTest) {
+	opt opt_obj;
+	opt_obj.opt_type = END_BOARD;
+	ASSERT_EQ(opt_obj.do_end_board(), 0);
+	opt_obj.opt_type_arg = "3";
+	ASSERT_EQ(opt_obj.do_end_board(), 1);
+}
+
+// ²âÊÔdo_gen_board()º¯Êý
+TEST(optTest, DoGenBoard) {
+	opt opt_obj;
+	opt_obj.opt_type = GEN_BOARD;
+	ASSERT_EQ(opt_obj.do_gen_board(), 0);
+	opt_obj.opt_type_arg = "3";
+
+	opt_obj.opt_append = Difficulty;
+	opt_obj.opt_append_arg = "1";
+	ASSERT_EQ(opt_obj.do_gen_board(), 1);
+	opt_obj.opt_append = HoleNumbers;
+	opt_obj.opt_append_arg = "5~10";
+	ASSERT_EQ(opt_obj.do_gen_board(), 1);
+	opt_obj.opt_append = OnlySolution;
+	ASSERT_EQ(opt_obj.do_gen_board(), 1);
+}
+
+// ²âÊÔdo_opt()º¯Êý
+TEST(optTest, DoOptTest) {
+	opt opt_obj;
+	opt_obj.opt_type = 10;
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+	opt_obj.opt_type_arg = "3";
+
+	opt_obj.opt_type = END_BOARD;
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+
+	opt_obj.opt_type = GEN_BOARD;
+	opt_obj.opt_append = Difficulty;
+	opt_obj.opt_append_arg = "1";
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+	opt_obj.opt_append = HoleNumbers;
+	opt_obj.opt_append_arg = "5~10";
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+	opt_obj.opt_append = OnlySolution;
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+
+	opt_obj.opt_type = SOLVE_BOARD;
+	opt_obj.opt_type_arg = "txtFiles/start.txt";
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+}
+
+
+// ²âÊÔÉú³ÉÎ¨Ò»½â
+TEST(optTest, OnlySolutionTest) {
+	opt opt_obj;
+	opt_obj.opt_type = GEN_BOARD;
+	opt_obj.opt_type_arg = "20";
+	opt_obj.opt_append = OnlySolution;
+	ASSERT_EQ(opt_obj.do_opt(), 1);
+	opt_obj.opt_type = SOLVE_BOARD;
+	opt_obj.opt_type_arg = "txtFiles/start.txt";
+	opt_obj.opt_append = 0;
+	Write_File write_obj("txtFiles/test/test_onlysolution.txt");
+	Read_File read_obj("txtFiles/start.txt");
+	Read_File read_obj2("txtFiles/start.txt");
+	SUDOKU sudoku;
+	for (int i = 0; i < 20; i++)
+	{
+		ASSERT_EQ(read_obj.read_data(), 1);
+		ASSERT_EQ(change_char_2_int(read_obj.board, board), 1);
+		ASSERT_EQ(sudoku.Backtrack(&write_obj, 0, 0, 0), 1);
+	}
 }

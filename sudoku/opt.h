@@ -20,11 +20,11 @@ class opt {
     bool do_end_board();
     bool do_gen_board();
     bool do_opt();
- private:
     int opt_type;
     string opt_type_arg;
     int opt_append;
     string opt_append_arg;
+ private:
     SUDOKU* sudoku;
 };
 

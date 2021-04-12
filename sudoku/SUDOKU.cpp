@@ -136,6 +136,7 @@ int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out, bool distinc
         cout << "ERROR POSITION!" << endl;
         return 0;
     }
+    int result_num = 0;
     // One correct result
     if (t == DIM * DIM) {
         if(write_out)
@@ -148,7 +149,6 @@ int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out, bool distinc
         return Backtrack(write_obj, t + 1, write_out, distinct);
     } else {
         // Empty point. Test for all the values
-        int result_num = 0;
         for (int i = 1; i < DIM + 1; i++) {
             board[x][y] = i;
             if (CorrectPlace(x, y)) {
@@ -217,7 +217,6 @@ bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks_min, i
             if (result_num > 1) {
                 continue;
             }
- 
         }
 
         // Output

@@ -97,6 +97,7 @@ bool change_char_2_int(char board1[DIM][DIM], int board2[DIM][DIM]) {
         for (int i = 0; i < DIM; i++)
             for (int j = 0; j < DIM; j++) {
                 board2[i][j] = board1[i][j] - '0';
+                if (board1[i][j] == '$') board2[i][j] = 0;
             }
     }
     catch (exception) {

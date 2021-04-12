@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>SUDOKU.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+
+#pragma once
+#include "SUDOKU.h"
+
+<span style = "background-color:#dfd">string align_string(string a) {
+    if (a.size() != 9) a = "348276519";
+    int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+    int index[DIM] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+    string result = "";
+    for (int i = 0; i &lt; DIM; i++) {
+        result = result + a[index[i]] + ' ';
+    }
+    result += "\n";</span>
+    int cur_pos;
+<span style = "background-color:#dfd">    for (int line = 1; line &lt; DIM; line++) {
+        cur_pos = shift[line - 1];
+        for (int j = 0; j &lt; DIM; j++, cur_pos++) {
+            cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
+            result = result + a[index[cur_pos]] + ' ';
+        }
+        result += "\n";
+    }
+    result += "\n";
+    return result;
+}</span>
+
+<span style = "background-color:#dfd">string gen_first_line() {
+    int diff[DIM] = { 0 }, index, j = 0;</span>
+    char c;
+<span style = "background-color:#dfd">    string first_line = "";
+    while (j &lt; DIM) {
+        index = rand() % DIM;
+        if (diff[index]) {
+            continue;</span>
+        }
+<span style = "background-color:#dfd">        c = index + 1 + '0';
+        first_line = first_line + c;
+        diff[index] = 1;
+        j++;
+    }
+    return first_line;
+}</span>
+
+<span style = "background-color:#dfd">bool set_blanks(Write_File* write_out, int blanks) {</span>
+    /*srand((unsigned)time(NULL));*/
+<span style = "background-color:#dfd">    if (blanks &gt; 64 || blanks &lt;= 0) return 0;</span>
+    int ran_i, ran_j;
+<span style = "background-color:#dfd">    if (blanks &gt;= 18) {</span>
+        // 2 blanks each row
+<span style = "background-color:#dfd">        for (int i = 0; i &lt; DIM; i++) {
+            for (int j = 0; j &lt; 2; j++) {
+                ran_j = rand() % DIM;
+                if (write_out-&gt;board[i][ran_j] == '$') {
+                    j--;
+                    continue;</span>
+                }
+<span style = "background-color:#dfd">                write_out-&gt;board[i][ran_j] = '$';
+            }
+        }
+        blanks -= 18;</span>
+    }
+    // Random position
+<span style = "background-color:#dfd">    int k = 0;
+    while (k &lt; blanks) {
+        ran_i = rand() % DIM;
+        ran_j = rand() % DIM;
+        if (write_out-&gt;board[ran_i][ran_j] == '$')
+            continue;
+        write_out-&gt;board[ran_i][ran_j] = '$';
+        k++;
+    }
+    return 1;
+}</span>
+
+<span style = "background-color:#dfd">bool SUDOKU::CorrectPlace(int x, int y) {
+    if (x &lt; 0 || x &gt;= DIM || y &lt; 0 || y &gt;= DIM) {</span>
+<span style = "background-color:#fdd">        cout &lt;&lt; "ERROR PLACE!" &lt;&lt; endl;
+        return false;</span>
+    }
+<span style = "background-color:#dfd">    int side = sqrt(DIM);
+    int up = x / side * side;
+    int down = up + side;
+    int left = y / side * side;
+    int right = left + side;</span>
+    // Empty pos is valid
+<span style = "background-color:#dfd">    if (board[x][y] == 0) {</span>
+<span style = "background-color:#fdd">        return true;</span>
+    }
+    // Search for the row
+<span style = "background-color:#dfd">    for (int i = 0; i &lt; DIM; i++) {
+        if (board[x][y] == board[i][y] &amp;&amp; x != i) {
+            return false;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+    // Search for the col
+<span style = "background-color:#dfd">    for (int i = 0; i &lt; DIM; i++) {
+        if (board[x][y] == board[x][i] &amp;&amp; y != i) {
+            return false;</span>
+        }
+<span style = "background-color:#dfd">    }</span>
+    // Search for the 9*9
+<span style = "background-color:#dfd">    for (int i = up; i &lt; down; i++) {
+        for (int j = left; j &lt; right; j++) {
+            if (board[x][y] == board[i][j]) {
+                if (x != i || y != j) {
+                    return false;</span>
+                }
+            }
+<span style = "background-color:#dfd">        }
+    }
+    return true;
+}</span>
+
+<span style = "background-color:#dfd">void SUDOKU::Display(Write_File *write_obj, string ps) {
+    string result;
+    stringstream sstream;
+    sstream &lt;&lt; ps &lt;&lt; '\n';
+    for (int i = 0; i &lt; DIM; i++) {
+        for (int j = 0; j &lt; DIM; j++) {
+            if (board[i][j]) {
+                sstream &lt;&lt; board[i][j] &lt;&lt; ' ';
+            } else {
+                sstream &lt;&lt; "$ ";</span>
+            }
+<span style = "background-color:#dfd">        }
+        sstream &lt;&lt; endl;
+    }
+    sstream &lt;&lt; "-------------------------\n";
+    result = sstream.str();
+    write_obj-&gt;write_data(result);
+}</span>
+
+<span style = "background-color:#dfd">int SUDOKU::Backtrack(Write_File* write_obj, int t, bool write_out, bool distinct) {
+    if (t &lt; 0 || t &gt; DIM * DIM) {
+        cout &lt;&lt; "ERROR POSITION!" &lt;&lt; endl;
+        return 0;</span>
+    }
+<span style = "background-color:#dfd">    int result_num = 0;</span>
+    // One correct result
+<span style = "background-color:#dfd">    if (t == DIM * DIM) {
+        if(write_out)
+            Display(write_obj, "Final board: ");
+        return 1;</span>
+    }
+<span style = "background-color:#dfd">    int x = t / DIM, y = t % DIM;</span>
+    // Get to the next one
+<span style = "background-color:#dfd">    if (board[x][y]) {
+        return Backtrack(write_obj, t + 1, write_out, distinct);</span>
+<span style = "background-color:#fdd">    } else {</span>
+        // Empty point. Test for all the values
+<span style = "background-color:#dfd">        for (int i = 1; i &lt; DIM + 1; i++) {
+            board[x][y] = i;
+            if (CorrectPlace(x, y)) {
+                result_num += Backtrack(write_obj, t + 1, write_out, distinct);
+                if (distinct &amp;&amp; result_num &gt; 1) return result_num;</span>
+            }
+<span style = "background-color:#dfd">        }
+        board[x][y] = 0;
+        return result_num;</span>
+    }
+<span style = "background-color:#dfd">}</span>
+
+<span style = "background-color:#dfd">bool SUDOKU::EndGen(int end_boards, Write_File* write_out) {
+    if (end_boards &lt;= 0 || end_boards &gt; 1000000) return false;
+    string first_line;
+    srand((unsigned)time(NULL));
+    for (int i = 0; i &lt; end_boards; i++) {
+        first_line = gen_first_line();
+        write_out-&gt;write_data(align_string(first_line));
+    }
+    return true;
+}</span>
+
+<span style = "background-color:#dfd">bool SUDOKU::StartGen(int start_boards, Write_File* write_out, int blanks_min, int blanks_max, bool distinct) {
+    if (start_boards &lt;= 0 || start_boards &gt; 1000000) return false;
+    if (blanks_min &lt; 1 || blanks_max &gt; 64 || blanks_max &lt; blanks_min) {
+        return false;</span>
+    }
+    int cur_pos;
+<span style = "background-color:#dfd">    int boards_number = 0;
+    int shift[DIM - 1] = { 3, 6, 1, 4, 7, 2, 5, 8 };
+    int index[DIM] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };</span>
+    /*srand((unsigned)time(NULL));*/
+<span style = "background-color:#dfd">    while (boards_number &lt; start_boards) {
+        int blanks = blanks_min + rand() % (blanks_max - blanks_min + 1);</span>
+
+        // Get the random first row
+<span style = "background-color:#dfd">        string first_line = gen_first_line();
+        for (int i = 0; i &lt; DIM; i++) {
+            write_out-&gt;board[0][i] = first_line[i];
+        }</span>
+
+        // Shift the first row
+<span style = "background-color:#dfd">        for (int line = 1; line &lt; DIM; line++) {
+            cur_pos = shift[line - 1];
+            for (int j = 0; j &lt; DIM; j++, cur_pos++) {
+                cur_pos = (cur_pos == DIM) ? 0 : cur_pos;
+                write_out-&gt;board[line][j] = write_out-&gt;board[0][index[cur_pos]];
+            }
+        }</span>
+
+        // Set blanks
+<span style = "background-color:#dfd">        if (!set_blanks(write_out, blanks)) {</span>
+<span style = "background-color:#fdd">            cout &lt;&lt; "error occured while generating blanks" &lt;&lt; endl;
+            return 0;</span>
+        }
+
+<span style = "background-color:#dfd">        if (!change_char_2_int(write_out-&gt;board, board)) {</span>
+<span style = "background-color:#fdd">            cout &lt;&lt; "error occured while changing char board to int board" &lt;&lt; endl;
+            return 0;</span>
+        }
+
+        // Check if the answer is distinct
+<span style = "background-color:#dfd">        if (distinct) {
+            int result_num = Backtrack(write_out, 0, 0, distinct);
+            if (result_num &gt; 1) {
+                continue;</span>
+            }
+        }
+
+        // Output
+<span style = "background-color:#dfd">        write_out-&gt;write_data();
+        write_out-&gt;write_data("\n");
+        boards_number++;
+    }
+    return true;
+}</span></pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>

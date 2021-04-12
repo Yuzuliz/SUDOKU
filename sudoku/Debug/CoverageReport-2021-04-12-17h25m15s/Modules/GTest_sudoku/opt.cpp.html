@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>opt.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+    <body onload="prettyPrint()">
+        <h4></h4>
+        <pre class="prettyprint lang-cpp linenums">
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+
+#include &lt;string&gt;
+#include "opt.h"
+#include "File_Operation.h"
+#include "SUDOKU.h"
+
+<span style = "background-color:#dfd">bool get_range(string arg, int* range_min, int* range_max) {
+    unsigned int i = 0;
+    for (; i &lt; arg.size(); i++) {
+        if (arg[i] == '~') break;
+    }
+    if (i &lt;= 0 || i &gt;= arg.size() - 1) return 0;
+    string range_min_str = "", range_max_str = "";
+    for (unsigned int j = 0; j &lt; i; j++)
+        range_min_str = range_min_str + arg[j];
+    for (unsigned int j = i + 1; j &lt; arg.size(); j++)
+        range_max_str = range_max_str + arg[j];
+    range_min_str = range_min_str + "\0";
+    range_max_str = range_max_str + "\0";
+    *range_min = atoi(range_min_str.c_str());
+    *range_max = atoi(range_max_str.c_str());
+    return 1;
+}</span>
+
+<span style = "background-color:#dfd">opt::~opt() {
+    delete this-&gt;sudoku;
+}</span>
+
+<span style = "background-color:#dfd">bool opt::get_n_arg(int &amp;hole_num_min, int &amp;hole_num_max, bool &amp;distinct) {
+    switch (this-&gt;opt_append) {</span>
+    case 0:
+<span style = "background-color:#dfd">        break;</span>
+    case Difficulty:
+<span style = "background-color:#dfd">        switch (atoi(this-&gt;opt_append_arg.c_str())) {</span>
+        case 1:
+<span style = "background-color:#dfd">            hole_num_min = 10;
+            hole_num_max = 20;
+            break;</span>
+        case 2:
+<span style = "background-color:#dfd">            hole_num_min = 30;
+            hole_num_max = 40;
+            break;</span>
+        case 3:
+<span style = "background-color:#dfd">            hole_num_min = 50;
+            hole_num_max = 60;
+            break;</span>
+        default:
+<span style = "background-color:#dfd">            cout &lt;&lt; "ERROR LEVEL!" &lt;&lt; endl;
+            return 0;</span>
+        }
+<span style = "background-color:#dfd">        break;</span>
+    case HoleNumbers:
+<span style = "background-color:#dfd">        if (!get_range(opt_append_arg, &amp;hole_num_min, &amp;hole_num_max)) {
+            cout &lt;&lt; "ERROR RANGE!" &lt;&lt; endl;
+            return 0;</span>
+        }
+<span style = "background-color:#dfd">        break;</span>
+    case OnlySolution:
+<span style = "background-color:#dfd">        distinct = 1;
+        break;</span>
+    default:
+<span style = "background-color:#dfd">        cout &lt;&lt; "ERROR ATTRIBUTE!" &lt;&lt; endl;
+        return 0;</span>
+    }
+<span style = "background-color:#dfd">    return 1;
+}</span>
+
+<span style = "background-color:#fdd">bool opt::get_opt(int argc, char* argv[]) {</span>
+    int opt;
+
+<span style = "background-color:#fdd">    while ((opt = getopt(argc, argv, optstring)) != -1) {
+        printf("opt = %c\n", opt);  // -a -b -c -d
+        printf("optarg = %s\n", optarg);  // -a 3
+        printf("optind = %d\n", optind);  // next pos
+        printf("argv[optind - 1] = %s\n\n", argv[optind - 1]);
+        switch (opt) {</span>
+        case 'c':
+<span style = "background-color:#fdd">            if (this-&gt;opt_type != 0) return 0;
+            this-&gt;opt_type = END_BOARD;
+            this-&gt;opt_type_arg = optarg;
+            break;</span>
+        case 's':
+<span style = "background-color:#fdd">            cout &lt;&lt; this-&gt;opt_type &lt;&lt; endl;
+            if (this-&gt;opt_type != 0) return 0;
+            this-&gt;opt_type = SOLVE_BOARD;
+            this-&gt;opt_type_arg = optarg;
+            break;</span>
+        case 'n':
+<span style = "background-color:#fdd">            if (this-&gt;opt_type != 0) return 0;
+            this-&gt;opt_type = GEN_BOARD;
+            this-&gt;opt_type_arg = optarg;
+            break;</span>
+        case 'm':
+<span style = "background-color:#fdd">            if (this-&gt;opt_append != 0) return 0;
+            this-&gt;opt_append = Difficulty;
+            this-&gt;opt_append_arg = optarg;
+            break;</span>
+        case 'r':
+<span style = "background-color:#fdd">            if (this-&gt;opt_append != 0) return 0;
+            this-&gt;opt_append = HoleNumbers;
+            this-&gt;opt_append_arg = optarg;
+            break;</span>
+        case 'u':
+<span style = "background-color:#fdd">            if (this-&gt;opt_append != 0) return 0;
+            this-&gt;opt_append = OnlySolution;</span>
+            break;
+        }
+<span style = "background-color:#fdd">    }
+    if (this-&gt;opt_append != 0 &amp;&amp; this-&gt;opt_type != GEN_BOARD) return 0;
+    if (this-&gt;opt_type == 0) return 0;
+    return 1;
+}</span>
+
+<span style = "background-color:#dfd">bool opt::do_solve_board() {
+    try {
+        Read_File read_obj(this-&gt;opt_type_arg);
+        Write_File *write_obj = new Write_File(Output_Path);</span>
+        int result_num;
+<span style = "background-color:#dfd">        while (!read_obj.read_eof()) {
+            if (!read_obj.read_data()) break;
+            cout &lt;&lt; endl;
+            change_char_2_int(read_obj.board, board);
+            this-&gt;sudoku-&gt;Display(write_obj, "Start: ");
+            result_num = sudoku-&gt;Backtrack(write_obj);
+            if (!result_num) {</span>
+<span style = "background-color:#fdd">                cout &lt;&lt; "Calculation failed.Please check the start board!\n";
+                delete write_obj;
+                return 0;
+            } else {</span>
+<span style = "background-color:#dfd">                cout &lt;&lt; "Calculation succeeded. ";
+                printf("%d results in total. ", result_num);
+                printf("Output filepath: %s\n", Output_Path.c_str());</span>
+            }
+<span style = "background-color:#dfd">        }
+        delete write_obj;
+        return 1;</span>
+    }
+    catch (const char* msg) {
+<span style = "background-color:#dfd">        cerr &lt;&lt; msg &lt;&lt; endl;
+        return 0;</span>
+<span style = "background-color:#fdd">    }</span>
+<span style = "background-color:#dfd">}</span>
+
+<span style = "background-color:#dfd">bool opt::do_end_board() {</span>
+    int board_num;
+<span style = "background-color:#dfd">    try {
+        board_num = atoi(this-&gt;opt_type_arg.c_str());
+    }</span>
+    catch (exception) {
+<span style = "background-color:#fdd">        cerr &lt;&lt; "wrong parameter" &lt;&lt; endl;
+        return 0;
+    }</span>
+<span style = "background-color:#dfd">    try {
+        Write_File* write_obj = new Write_File(gen_path_end);
+        if (!this-&gt;sudoku-&gt;EndGen(board_num, write_obj)) {
+            cout &lt;&lt; "Final board generation failed." &lt;&lt; endl;
+            return 0;</span>
+<span style = "background-color:#fdd">        } else {</span>
+<span style = "background-color:#dfd">            cout &lt;&lt; "Final board generation succeeded. File path: ";
+            cout &lt;&lt; gen_path_end &lt;&lt; endl;</span>
+        }
+<span style = "background-color:#dfd">        return 1;</span>
+    }
+    catch (const char* msg) {
+<span style = "background-color:#fdd">        cerr &lt;&lt; msg &lt;&lt; endl;
+        return 0;
+    }</span>
+<span style = "background-color:#dfd">}</span>
+
+<span style = "background-color:#dfd">bool opt::do_gen_board() {
+    int board_num = atoi(this-&gt;opt_type_arg.c_str());
+    int hole_num_min = 25, hole_num_max = 55;
+    bool distinct = 0;
+    if (!this-&gt;get_n_arg(hole_num_min, hole_num_max, distinct)) {</span>
+<span style = "background-color:#fdd">        cout &lt;&lt; "get append args failed!" &lt;&lt; endl;
+        return 0;</span>
+    }
+<span style = "background-color:#dfd">    try {
+        Write_File* write_obj = new Write_File(gen_path_start);
+        if (!sudoku-&gt;StartGen(board_num, write_obj, hole_num_min, hole_num_max, distinct)) {
+            cout &lt;&lt; "Original board generation failed." &lt;&lt; endl;
+            delete write_obj;
+            return 0;</span>
+<span style = "background-color:#fdd">        } else {</span>
+<span style = "background-color:#dfd">            cout &lt;&lt; "Original board generation succeeded. File path: ";
+            cout &lt;&lt; gen_path_start &lt;&lt; endl;</span>
+        }
+<span style = "background-color:#dfd">        delete write_obj;
+        return 1;</span>
+    }
+    catch (const char* msg) {
+<span style = "background-color:#fdd">        cerr &lt;&lt; msg &lt;&lt; endl;
+        return 0;
+    }</span>
+<span style = "background-color:#dfd">}</span>
+
+<span style = "background-color:#dfd">bool opt::do_opt() {
+    if (this-&gt;opt_type == SOLVE_BOARD) {
+        if (!this-&gt;do_solve_board()) {</span>
+<span style = "background-color:#fdd">            cout &lt;&lt; "Cannot solve the question!" &lt;&lt; endl;
+            return 0;</span>
+<span style = "background-color:#dfd">        }
+    } else if (this-&gt;opt_type == END_BOARD) {
+        if (!this-&gt;do_end_board()) {</span>
+<span style = "background-color:#fdd">            cout &lt;&lt; "Cannot generate the final board!" &lt;&lt; endl;
+            return 0;</span>
+<span style = "background-color:#dfd">        }
+    } else if (this-&gt;opt_type == GEN_BOARD) {
+        if (!this-&gt;do_gen_board()) {</span>
+<span style = "background-color:#fdd">            cout &lt;&lt; "Cannot generate the original board!" &lt;&lt; endl;
+            return 0;</span>
+        }
+<span style = "background-color:#dfd">    } else {
+        cout &lt;&lt; "ERROR OPTION!" &lt;&lt; endl;
+        return 0;</span>
+    }
+<span style = "background-color:#dfd">    return 1;
+}</span></pre>
+        <hr />
+        <table width="100%">
+            <thead>
+                <tr>
+                    <th align="center">
+                        <small>Generated by</small>
+                        <a href="https://github.com/OpenCppCoverage/OpenCppCoverage/releases">
+                            <strong>OpenCppCoverage (Version: 0.9.9.0)</strong>
+                        </a>
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </body>
+</html>
