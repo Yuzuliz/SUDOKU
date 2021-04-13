@@ -1,6 +1,0 @@
-D:\CODES\C++\softwareEngineering\sudoku\Debug\sudoku.exe
-D:\CODES\C++\softwareEngineering\sudoku\Debug\sudoku.pdb
-C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\Debug\sudoku.exe
-C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\Debug\sudoku.pdb
-D:\CODES\C++\softwareEngineering\github_sudoku\sudoku\Debug\sudoku.exe
-D:\CODES\C++\softwareEngineering\github_sudoku\sudoku\Debug\sudoku.pdb
