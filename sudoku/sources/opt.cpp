@@ -81,7 +81,6 @@ bool opt::get_opt(int argc, char* argv[]) {
             this->opt_type_arg = optarg;
             break;
         case 's':
-            cout << this->opt_type << endl;
             if (this->opt_type != 0) return 0;
             this->opt_type = SOLVE_BOARD;
             this->opt_type_arg = optarg;
@@ -144,11 +143,9 @@ bool opt::do_solve_board() {
 
 bool opt::do_end_board() {
     int board_num;
-    try {
-        board_num = atoi(this->opt_type_arg.c_str());
-    }
-    catch (exception) {
-        cerr << "wrong parameter" << endl;
+    board_num = atoi(this->opt_type_arg.c_str());
+    if (board_num <= 0 || board_num > 1000000) {
+        cout << "wrong parameter" << endl;
         return 0;
     }
     try {

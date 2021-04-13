@@ -39,8 +39,8 @@
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>D:\Downloads\getopt9\getopt9\include;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Downloads\getopt9\getopt9\lib;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\lib;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

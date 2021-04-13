@@ -256,6 +256,101 @@ TEST(optTest, GetNArgTest) {
 	ASSERT_EQ(distinct, 1);
 }
 
+// ²âÊÔget_opt()º¯Êý
+TEST(optTest, GetOptTest) {
+	opt opt_obj1;
+	int argc = 3;
+	char* argv1[] = { "sudoku.exe", "-c", "3"};
+	ASSERT_EQ(opt_obj1.get_opt(argc, argv1), 1);
+	ASSERT_EQ(opt_obj1.opt_type, END_BOARD);
+	ASSERT_EQ(opt_obj1.opt_type_arg, "3");
+
+	optind = 0;
+	opt opt_obj2;
+	argc = 3;
+	char* argv2[] = { "sudoku.exe", "-s", "txtFiles/start.txt"};
+	ASSERT_EQ(opt_obj2.get_opt(argc, argv2), 1);
+	ASSERT_EQ(opt_obj2.opt_type, SOLVE_BOARD);
+	ASSERT_EQ(opt_obj2.opt_type_arg, "txtFiles/start.txt");
+
+	optind = 0;
+	opt opt_obj3;
+	argc = 5;
+	char* argv3[] = { "sudoku.exe", "-n", "3", "-m", "2"};
+	ASSERT_EQ(opt_obj3.get_opt(argc, argv3), 1);
+	ASSERT_EQ(opt_obj3.opt_type, GEN_BOARD);
+	ASSERT_EQ(opt_obj3.opt_type_arg, "3");
+	ASSERT_EQ(opt_obj3.opt_append, Difficulty);
+	ASSERT_EQ(opt_obj3.opt_append_arg, "2");
+
+	optind = 0;
+	opt opt_obj4;
+	argc = 5;
+	char* argv4[] = { "sudoku.exe", "-n", "3", "-r", "20~50" };
+	ASSERT_EQ(opt_obj4.get_opt(argc, argv4), 1);
+	ASSERT_EQ(opt_obj4.opt_type, GEN_BOARD);
+	ASSERT_EQ(opt_obj4.opt_type_arg, "3");
+	ASSERT_EQ(opt_obj4.opt_append, HoleNumbers);
+	ASSERT_EQ(opt_obj4.opt_append_arg, "20~50");
+
+	optind = 0;
+	opt opt_obj5;
+	argc = 4;
+	char* argv5[] = { "sudoku.exe", "-n", "3", "-u" };
+	ASSERT_EQ(opt_obj5.get_opt(argc, argv5), 1);
+	ASSERT_EQ(opt_obj5.opt_type, GEN_BOARD);
+	ASSERT_EQ(opt_obj5.opt_type_arg, "3");
+	ASSERT_EQ(opt_obj5.opt_append, OnlySolution);
+
+	optind = 0;
+	opt opt_obj6;
+	argc = 2;
+	char* argv6[] = { "sudoku.exe", "-u" };
+	ASSERT_EQ(opt_obj6.get_opt(argc, argv6), 0);
+
+	optind = 0;
+	opt opt_obj7;
+	argc = 4;
+	char* argv7[] = { "sudoku.exe", "-c", "3", "-u" };
+	ASSERT_EQ(opt_obj7.get_opt(argc, argv7), 0);
+
+	optind = 0;
+	opt opt_obj8;
+	argc = 5;
+	char* argv8[] = { "sudoku.exe", "-c", "3", "-n", "4" };
+	ASSERT_EQ(opt_obj8.get_opt(argc, argv8), 0);
+
+	optind = 0;
+	opt opt_obj9;
+	argc = 5;
+	char* argv9[] = { "sudoku.exe", "-n", "3", "-c", "4" };
+	ASSERT_EQ(opt_obj9.get_opt(argc, argv9), 0);
+
+	optind = 0;
+	opt opt_obj10;
+	argc = 5;
+	char* argv10[] = { "sudoku.exe", "-n", "3", "-s", "txtFiles/start.txt" };
+	ASSERT_EQ(opt_obj10.get_opt(argc, argv10), 0);
+
+	optind = 0;
+	opt opt_obj11;
+	argc = 5;
+	char* argv11[] = { "sudoku.exe", "-m", "3", "-r", "10" };
+	ASSERT_EQ(opt_obj11.get_opt(argc, argv11), 0);
+
+	optind = 0;
+	opt opt_obj12;
+	argc = 5;
+	char* argv12[] = { "sudoku.exe", "-r", "3", "-m", "10" };
+	ASSERT_EQ(opt_obj12.get_opt(argc, argv12), 0);
+
+	optind = 0;
+	opt opt_obj13;
+	argc = 4;
+	char* argv13[] = { "sudoku.exe", "-r", "3", "-u"};
+	ASSERT_EQ(opt_obj13.get_opt(argc, argv13), 0);
+}
+
 // ²âÊÔdo_solve_board()º¯Êý
 TEST(optTest, DoSolveBoardTest) {
 	opt opt_obj;
@@ -297,6 +392,23 @@ TEST(optTest, DoOptTest) {
 	opt opt_obj;
 	opt_obj.opt_type = 10;
 	ASSERT_EQ(opt_obj.do_opt(), 0);
+
+	opt_obj.opt_type = END_BOARD;
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+
+	opt_obj.opt_type = GEN_BOARD;
+	opt_obj.opt_append = Difficulty;
+	opt_obj.opt_append_arg = "1";
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+	opt_obj.opt_append = HoleNumbers;
+	opt_obj.opt_append_arg = "5~10";
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+	opt_obj.opt_append = OnlySolution;
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+
+	opt_obj.opt_type = SOLVE_BOARD;
+	ASSERT_EQ(opt_obj.do_opt(), 0);
+
 	opt_obj.opt_type_arg = "3";
 
 	opt_obj.opt_type = END_BOARD;

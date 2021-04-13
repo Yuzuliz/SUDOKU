@@ -25,7 +25,6 @@ class Read_File{
     ~Read_File();
     bool read_data();
     bool read_eof();
-    void show_board();
     char board[DIM][DIM];
  private:
     ifstream ReadFile;

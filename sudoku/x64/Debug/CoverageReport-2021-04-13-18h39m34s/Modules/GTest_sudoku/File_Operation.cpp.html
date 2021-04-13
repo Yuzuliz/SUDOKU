@@ -1,0 +1,105 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>File_Operation.cpp</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+
+#pragma once
+#include &lt;string&gt;
+#include "./File_Operation.h"
+<span style = "background-color:#dfd">Write_File::Write_File(string file) {</span>
+    // output
+    try {
+<span style = "background-color:#dfd">        this-&gt;WriteFile.open(file, ios::out);</span>
+    }
+<span style = "background-color:#fdd">    catch (exception) {
+        throw "error occured while opening a file to write";
+    }</span>
+<span style = "background-color:#dfd">    if (!this-&gt;WriteFile.is_open()) {
+        throw "Output file cannot open";</span>
+    }
+<span style = "background-color:#dfd">    cout &lt;&lt; "Output file " &lt;&lt; file &lt;&lt; " open" &lt;&lt; endl;
+    for (int i = 0; i &lt; DIM; i++)
+        for (int j = 0; j &lt; DIM; j++)
+            this-&gt;board[i][j] = 0;
+}</span>
+
+<span style = "background-color:#dfd">Write_File::~Write_File() {
+    this-&gt;WriteFile.close();
+}</span>
+
+<span style = "background-color:#dfd">bool Write_File::write_data() {</span>
+    // write the members into the file
+    try {
+<span style = "background-color:#dfd">        for (int i = 0; i &lt; DIM; i++) {
+            for (int j = 0; j &lt; DIM; j++)
+                this-&gt;WriteFile &lt;&lt; this-&gt;board[i][j] &lt;&lt; " ";
+            this-&gt;WriteFile &lt;&lt; endl;
+        }</span>
+    }
+<span style = "background-color:#fdd">    catch (exception) {
+        cerr &lt;&lt; "error occured while writing data" &lt;&lt; endl;
+        return 0;
+    }</span>
+<span style = "background-color:#dfd">    return 1;
+}</span>
+
+<span style = "background-color:#dfd">bool Write_File::write_data(string result) {</span>
+    try {
+<span style = "background-color:#dfd">        this-&gt;WriteFile &lt;&lt; result;</span>
+    }
+<span style = "background-color:#fdd">    catch (exception) {
+        cerr &lt;&lt; "error occured while writing data" &lt;&lt; endl;
+        return 0;
+    }</span>
+<span style = "background-color:#dfd">    return 1;
+}</span>
+
+<span style = "background-color:#dfd">Read_File::Read_File(string file) {
+    this-&gt;ReadFile.open(file, ios::in);
+    if ( !this-&gt;ReadFile.is_open() ) {
+        throw "The file cannot open";</span>
+    }
+<span style = "background-color:#dfd">    cout &lt;&lt; "Opened the file" &lt;&lt; endl;
+    for (int i = 0; i &lt; DIM; i++)
+        for (int j = 0; j &lt; DIM; j++)
+            this-&gt;board[i][j] = 0;
+}</span>
+
+<span style = "background-color:#dfd">Read_File::~Read_File() {
+    this-&gt;ReadFile.close();
+}</span>
+
+<span style = "background-color:#dfd">bool Read_File::read_data() {</span>
+    // get data from the file
+<span style = "background-color:#dfd">    for (int i = 0; i &lt; DIM; i++)
+        for (int j = 0; j &lt; DIM; j++) {
+            if ( this-&gt;ReadFile.eof()) return 0;
+            this-&gt;ReadFile &gt;&gt; this-&gt;board[i][j];
+            if ( this-&gt;board[i][j] == '$') this-&gt;board[i][j] = '0';
+        }
+    return 1;
+}</span>
+
+<span style = "background-color:#dfd">bool Read_File::read_eof() {
+    if (this-&gt;ReadFile.eof()) return 1;
+    return 0;
+}</span>
+
+<span style = "background-color:#dfd">bool change_char_2_int(char board1[DIM][DIM], int board2[DIM][DIM]) {
+    for (int i = 0; i &lt; DIM; i++)
+        for (int j = 0; j &lt; DIM; j++) {
+            board2[i][j] = board1[i][j] - '0';
+            if (board1[i][j] == '$') board2[i][j] = 0;
+        }
+    return 1;
+}</span></pre>
+	</body>
+</html>

@@ -1,0 +1,31 @@
+[2021-04-13 18:39:33] [info] Start Program:
+Path:"GTest_sudoku.exe"
+Arguments:
+Working directory: not set.
+Modules: Selected: * Excluded: 
+Sources: Selected: sudoku Excluded: 
+Log Level: Normal
+Cover Children: 0
+Aggregate by file: 1
+Continue after C++ exception: 0
+Optimized build support: 0
+Export: Html 
+Input coverage: 
+Unified diff: 
+Excluded line regular expressions: 
+Substitute pdb source paths: 
+
+[2021-04-13 18:39:33] [info] Module: C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug\GTest_sudoku.exe is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\ntdll.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\kernel32.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\KernelBase.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\vcruntime140d.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\msvcp140d.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\vcruntime140_1d.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:33] [info] Module: C:\Windows\System32\ucrtbased.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:34] [info] Module: C:\Windows\System32\kernel.appcore.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:34] [info] Module: C:\Windows\System32\msvcrt.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:34] [info] Module: C:\Windows\System32\rpcrt4.dll is selected because it matches selected pattern: *
+[2021-04-13 18:39:34] [info] ----------------------------------------------------
+[2021-04-13 18:39:34] [info] Coverage generated in Folder C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug\CoverageReport-2021-04-13-18h39m34s
+[2021-04-13 18:39:34] [info] ----------------------------------------------------

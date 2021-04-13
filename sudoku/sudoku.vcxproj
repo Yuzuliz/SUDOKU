@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Downloads\getopt9\getopt9\include;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\headers;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Downloads\getopt9\getopt9\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\headers;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -145,13 +145,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="common.h" />
-    <ClInclude Include="File_Operation.h" />
-    <ClInclude Include="getopt.h" />
-    <ClInclude Include="opt.h" />
-    <ClInclude Include="SUDOKU.h" />
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="getopt.lib" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +153,14 @@
     <ClCompile Include="sources\main.cpp" />
     <ClCompile Include="sources\opt.cpp" />
     <ClCompile Include="sources\SUDOKU.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="headers\common.h" />
+    <ClInclude Include="headers\File_Operation.h" />
+    <ClInclude Include="headers\getopt.h" />
+    <ClInclude Include="headers\opt.h" />
+    <ClInclude Include="headers\SUDOKU.h" />
+    <ClInclude Include="headers\tailor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

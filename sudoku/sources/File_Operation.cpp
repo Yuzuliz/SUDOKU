@@ -82,25 +82,11 @@ bool Read_File::read_eof() {
     return 0;
 }
 
-void Read_File::show_board() {
-    for (int i = 0; i < DIM; i++) {
-        for (int j = 0; j < DIM; j++)
-            cout << this->board[i][j] << " ";
-        cout << endl;
-    }
-}
-
 bool change_char_2_int(char board1[DIM][DIM], int board2[DIM][DIM]) {
-    try {
-        for (int i = 0; i < DIM; i++)
-            for (int j = 0; j < DIM; j++) {
-                board2[i][j] = board1[i][j] - '0';
-                if (board1[i][j] == '$') board2[i][j] = 0;
-            }
-    }
-    catch (exception) {
-        cerr << "error occured while transfering boards" << endl;
-        return 0;
-    }
+    for (int i = 0; i < DIM; i++)
+        for (int j = 0; j < DIM; j++) {
+            board2[i][j] = board1[i][j] - '0';
+            if (board1[i][j] == '$') board2[i][j] = 0;
+        }
     return 1;
 }

@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="头文件">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="资源文件">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -12,23 +8,9 @@
     <Filter Include="源文件">
       <UniqueIdentifier>{26e78f58-1c0a-4f5e-ab4c-e8cb123145b9}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SUDOKU.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="getopt.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="File_Operation.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="opt.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{2adde757-3ae4-4ecd-b48e-1b89852945e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Library Include="getopt.lib">
@@ -51,5 +33,25 @@
     <ClCompile Include="sources\SUDOKU.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="headers\common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\File_Operation.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\getopt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\opt.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\SUDOKU.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="headers\tailor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

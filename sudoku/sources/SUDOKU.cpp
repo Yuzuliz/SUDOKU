@@ -202,16 +202,9 @@ bool SUDOKU::StartGen(int num, Write_File* w, int b_min, int b_max, bool d) {
         }
 
         // Set blanks
-        if (!set_blanks(w, blanks)) {
-            cout << "error occured while generating blanks" << endl;
-            return 0;
-        }
+        set_blanks(w, blanks);
 
-        if (!change_char_2_int(w->board, board)) {
-            cout << "error occured ";
-            cout << "while changing char board to int board" << endl;
-            return 0;
-        }
+        if (!change_char_2_int(w->board, board)) return 0;
 
         // Check if the answer is d
         if (d) {

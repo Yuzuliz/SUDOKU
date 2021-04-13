@@ -1,0 +1,47 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <meta charset="utf-8"/>
+	    <title>opt.h</title>
+	    <link href="../../third-party/google-code-prettify/prettify-CppCoverage.css" type="text/css" rel="stylesheet" />
+	    <script type="text/javascript" src="../../third-party/google-code-prettify/prettify.js"></script>
+	</head>
+	<body onload="prettyPrint()">
+        <h4></h4>
+		<pre class="prettyprint lang-cpp linenums">
+// Copyright 2021 Yingtong_Yu Yifei_Guo
+
+#pragma once
+#ifndef SUDOKU_OPT_H_
+#define SUDOKU_OPT_H_
+
+#include &lt;string&gt;
+#include "./common.h"
+#include "./SUDOKU.h"
+
+enum { END_BOARD = 1, SOLVE_BOARD, GEN_BOARD };  // mode
+enum { Difficulty = 1, HoleNumbers, OnlySolution };
+
+class opt {
+ public:
+<span style = "background-color:#dfd">    opt() :opt_type(0), opt_append(0) { sudoku = new SUDOKU(Output_Path); }</span>
+    ~opt();
+    bool get_n_arg(int &amp;hole_num_min, int &amp;hole_num_max, bool &amp;distinct);
+    bool get_opt(int argc, char* argv[]);
+    bool do_solve_board();
+    bool do_end_board();
+    bool do_gen_board();
+    bool do_opt();
+    int opt_type;
+    string opt_type_arg;
+    int opt_append;
+    string opt_append_arg;
+ private:
+    SUDOKU* sudoku;
+};
+
+bool get_range(string arg, int* range_min, int* range_max);
+
+#endif  // SUDOKU_OPT_H_</pre>
+	</body>
+</html>
