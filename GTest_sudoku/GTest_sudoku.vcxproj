@@ -38,6 +38,10 @@
     <SourcePath>$(SourcePath)</SourcePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\Downloads\getopt9\getopt9\include;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Downloads\getopt9\getopt9\lib;C:\Users\Yingtong Yu\source\repos\SUDOKU\sudoku\x64\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
   </ItemGroup>
@@ -93,6 +97,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>getopt.lib;getopt.obj;File_Operation.obj;SUDOKU.obj;opt.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
