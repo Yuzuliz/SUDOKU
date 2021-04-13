@@ -1,0 +1,2 @@
+D:\CODES\C++\softwareEngineering\pair\sudoku\x64\Debug\sudoku.exe
+D:\CODES\C++\softwareEngineering\pair\sudoku\x64\Debug\sudoku.pdb

@@ -1,0 +1,8 @@
+﻿  File_Operation.cpp
+  main.cpp
+  opt.cpp
+  SUDOKU.cpp
+D:\CODES\C++\softwareEngineering\pair\sudoku\sources\SUDOKU.cpp(82,14): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+  正在生成代码...
+  getopt.c
+  sudoku.vcxproj -> D:\CODES\C++\softwareEngineering\pair\sudoku\x64\Debug\sudoku.exe
